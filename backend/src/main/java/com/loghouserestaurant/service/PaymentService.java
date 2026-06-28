@@ -48,14 +48,23 @@ public class PaymentService {
             attributes.put("razorpay_order_id", razorpayOrderId);
             attributes.put("razorpay_payment_id", razorpayPaymentId);
             attributes.put("razorpay_signature", razorpaySignature);
-
-            // Corrected method call: Utils.verifyPaymentSignature expects a JSONObject of attributes and the API key secret.
             return Utils.verifyPaymentSignature(attributes, razorpayKeySecret);
         } catch (RazorpayException e) {
-            // This specific method is instructed to return false on failure, not throw an exception.
-            // The RazorpayException here would typically indicate an issue with the verification process itself,
-            // but for signature verification, a false return is the expected behavior for invalid signatures.
-            // If the exception indicates a configuration issue, it might be logged, but the method contract is to return boolean.
+            return false;
+        }
+    }
+
+    public boolean verifyWebhookSignature(String payload, String signature) {
+        try {
+            JSONObject attributes = new JSONObject();
+            attributes.put("razorpay_payment_link_id", "");
+            attributes.put("razorpay_payment_link_reference_id", "");
+            attributes.put("razorpay_payment_link_status", "");
+            attributes.put("razorpay_payment_id", "");
+            attributes.put("razorpay_signature", signature);
+            // Webhook signature verification uses the raw payload + webhook secret
+            return Utils.verifyWebhookSignature(payload, signature, razorpayWebhookSecret);
+        } catch (RazorpayException e) {
             return false;
         }
     }

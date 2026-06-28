@@ -2,8 +2,8 @@ package com.loghouserestaurant.controller;
 
 import com.loghouserestaurant.service.PaymentService;
 import com.loghouserestaurant.service.OrderService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,7 +72,7 @@ public class PaymentController {
                 logger.warn("Missing razorpay_payment_id or razorpay_order_id in webhook payload.");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             logger.error("Error parsing Razorpay webhook payload: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
