@@ -1,0 +1,2709 @@
+{
+  "generated_at" : "2024-07-27T12:00:00Z",
+  "business_name" : "Log House Restaurant",
+  "base_package" : "com.loghouserestaurant",
+  "project_dependencies" : {
+    "spring_boot_starters" : [ "web", "data-jpa", "postgresql", "lombok", "validation", "actuator", "security", "mail" ],
+    "npm_packages" : [ "@tanstack/react-query", "react-hook-form", "zod", "axios", "react-router-dom", "clsx", "lucide-react", "@radix-ui/react-dialog", "@radix-ui/react-toast", "@radix-ui/react-label", "@radix-ui/react-slot" ],
+    "maven_dependencies" : null
+  },
+  "files" : [ {
+    "file_name" : "User.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/User.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Represents a user entity for authentication and authorization.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Primary key, auto-generated."
+    }, {
+      "name" : "email",
+      "type" : "String",
+      "description" : "User's email, used for login. Must be unique and not null."
+    }, {
+      "name" : "password",
+      "type" : "String",
+      "description" : "BCrypt-hashed password. Not null."
+    }, {
+      "name" : "role",
+      "type" : "Role",
+      "description" : "User's role (ADMIN or CUSTOMER). Not null."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/Role.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-auth",
+    "file_role" : "MODEL layer - Defines the User schema for persistence, including email, hashed password, and role. Used by UserService for authentication."
+  }, {
+    "file_name" : "Role.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/Role.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Enum defining user roles within the application.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "ADMIN",
+      "type" : "enum",
+      "description" : "Administrator role with full access to management endpoints."
+    }, {
+      "name" : "CUSTOMER",
+      "type" : "enum",
+      "description" : "Customer role for future features like order history."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-auth",
+    "file_role" : "MODEL layer - A top-level enum defining the authorization roles (ADMIN, CUSTOMER). Referenced by the User entity and SecurityConfig."
+  }, {
+    "file_name" : "UserRepository.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/repository/UserRepository.java",
+    "file_type" : "BACKEND",
+    "layer" : "REPOSITORY",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Spring Data JPA repository for User entities.",
+    "public_functions" : [ {
+      "name" : "findByEmail",
+      "parameters" : [ "String email" ],
+      "return_type" : "Optional<User>",
+      "description" : "Finds a user by their email address."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/User.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-auth",
+    "file_role" : "REPOSITORY layer - Provides data access methods for the User entity. Its findByEmail(String) method is the primary entry point for the authentication flow."
+  }, {
+    "file_name" : "UserService.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/service/UserService.java",
+    "file_type" : "BACKEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Implements Spring Security's UserDetailsService to load user-specific data.",
+    "public_functions" : [ {
+      "name" : "loadUserByUsername",
+      "parameters" : [ "String email" ],
+      "return_type" : "UserDetails",
+      "description" : "Loads a user by email for Spring Security authentication."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/repository/UserRepository.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-auth",
+    "file_role" : "SERVICE layer - Implements UserDetailsService for Spring Security. The loadUserByUsername(String email) method is called by the authentication manager to fetch user details."
+  }, {
+    "file_name" : "JwtUtil.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/util/JwtUtil.java",
+    "file_type" : "BACKEND",
+    "layer" : "UTIL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Utility class for handling JWT creation, validation, and parsing.",
+    "public_functions" : [ {
+      "name" : "generateToken",
+      "parameters" : [ "UserDetails userDetails" ],
+      "return_type" : "String",
+      "description" : "Generates a JWT for an authenticated user."
+    }, {
+      "name" : "validateToken",
+      "parameters" : [ "String token", "UserDetails userDetails" ],
+      "return_type" : "boolean",
+      "description" : "Validates a JWT against user details."
+    }, {
+      "name" : "extractEmail",
+      "parameters" : [ "String token" ],
+      "return_type" : "String",
+      "description" : "Extracts the email (subject) from a JWT."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-auth",
+    "file_role" : "UTIL layer - Provides static methods for JWT operations. Key methods are generateToken(UserDetails) for AuthController and validateToken(String, UserDetails) for JwtAuthFilter."
+  }, {
+    "file_name" : "JwtAuthFilter.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/security/JwtAuthFilter.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONFIG",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A servlet filter that intercepts requests to validate JWTs and set the security context.",
+    "public_functions" : [ {
+      "name" : "doFilterInternal",
+      "parameters" : [ "HttpServletRequest request", "HttpServletResponse response", "FilterChain filterChain" ],
+      "return_type" : "void",
+      "description" : "Core filter logic to parse and validate the Bearer token."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/util/JwtUtil.java", "backend/src/main/java/com/loghouserestaurant/service/UserService.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-auth",
+    "file_role" : "CONFIG layer - A Spring Security filter that runs once per request. It extracts the JWT from the 'Authorization' header and uses JwtUtil to validate it, setting the authentication context if valid."
+  }, {
+    "file_name" : "SecurityConfig.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/config/SecurityConfig.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONFIG",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Centralized security configuration for the application, defining authorization rules and filter chains.",
+    "public_functions" : [ {
+      "name" : "securityFilterChain",
+      "parameters" : [ "HttpSecurity http" ],
+      "return_type" : "SecurityFilterChain",
+      "description" : "Configures CORS, CSRF, session management, and authorization rules for all HTTP requests."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/security/JwtAuthFilter.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-auth",
+    "file_role" : "CONFIG layer - Defines the core security posture. It configures the HttpSecurity chain to be stateless, adds the JwtAuthFilter, and sets up authorization rules for all API endpoints."
+  }, {
+    "file_name" : "AdminInitializer.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/config/AdminInitializer.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONFIG",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A CommandLineRunner that creates the initial admin user from environment variables if one doesn't exist.",
+    "public_functions" : [ {
+      "name" : "run",
+      "parameters" : [ "String... args" ],
+      "return_type" : "void",
+      "description" : "Executes on application startup to ensure an admin user is present."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/repository/UserRepository.java", "backend/src/main/java/com/loghouserestaurant/model/User.java", "backend/src/main/java/com/loghouserestaurant/model/Role.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-auth",
+    "file_role" : "CONFIG layer - A startup runner that seeds the database with an initial admin user. It checks UserRepository to prevent creating duplicates on subsequent startups."
+  }, {
+    "file_name" : "AuthController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/AuthController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Handles user authentication requests.",
+    "public_functions" : [ {
+      "name" : "login",
+      "parameters" : [ "AuthRequest authRequest" ],
+      "return_type" : "ResponseEntity<AuthResponse>",
+      "description" : "Authenticates a user and returns a JWT."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "POST",
+      "path" : "/api/v1/auth/login",
+      "request_body" : "AuthRequest",
+      "response_body" : "AuthResponse",
+      "description" : "Takes email and password, returns a JWT and user role upon successful authentication."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/dto/AuthRequest.java", "backend/src/main/java/com/loghouserestaurant/dto/AuthResponse.java", "backend/src/main/java/com/loghouserestaurant/util/JwtUtil.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "authentication-api",
+    "file_role" : "CONTROLLER layer - Exposes the public authentication endpoint. Its login method orchestrates authentication and calls JwtUtil.generateToken() to create a token for the client."
+  }, {
+    "file_name" : "AuthRequest.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/AuthRequest.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Data Transfer Object for authentication requests.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "email",
+      "type" : "String",
+      "description" : "User's email. Validated with @NotBlank and @Email."
+    }, {
+      "name" : "password",
+      "type" : "String",
+      "description" : "User's password. Validated with @NotBlank."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "authentication-api",
+    "file_role" : "DTO layer - Defines the request body for the POST /api/v1/auth/login endpoint. Contains validation annotations for incoming credentials."
+  }, {
+    "file_name" : "AuthResponse.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/AuthResponse.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Data Transfer Object for authentication responses.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "token",
+      "type" : "String",
+      "description" : "The generated JWT."
+    }, {
+      "name" : "role",
+      "type" : "String",
+      "description" : "The role of the authenticated user (e.g., 'ADMIN')."
+    }, {
+      "name" : "expiresAt",
+      "type" : "long",
+      "description" : "Token expiration timestamp in epoch milliseconds."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "authentication-api",
+    "file_role" : "DTO layer - Defines the response body for a successful login. It provides the JWT and user role to the frontend client."
+  }, {
+    "file_name" : "SpaController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/SpaController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Forwards all non-API, non-static-file requests to the React frontend's index.html.",
+    "public_functions" : [ {
+      "name" : "fallback",
+      "parameters" : [ ],
+      "return_type" : "String",
+      "description" : "Handles GET requests for SPA routes."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-infra",
+    "file_role" : "CONTROLLER layer - A special @Controller (not @RestController) that ensures Spring Boot serves the React application for any deep-link paths like /menu or /about."
+  }, {
+    "file_name" : "GlobalExceptionHandler.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/exception/GlobalExceptionHandler.java",
+    "file_type" : "BACKEND",
+    "layer" : "EXCEPTION",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Centralized exception handling for the application.",
+    "public_functions" : [ {
+      "name" : "handleResourceNotFoundException",
+      "parameters" : [ "ResourceNotFoundException ex" ],
+      "return_type" : "ResponseEntity<ErrorResponse>",
+      "description" : "Handles 404 Not Found errors."
+    }, {
+      "name" : "handleValidationExceptions",
+      "parameters" : [ "MethodArgumentNotValidException ex" ],
+      "return_type" : "ResponseEntity<ErrorResponse>",
+      "description" : "Handles 400 Bad Request errors from DTO validation."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/dto/ErrorResponse.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-infra",
+    "file_role" : "EXCEPTION layer - A @ControllerAdvice class that intercepts exceptions thrown from any controller, formatting them into a consistent ErrorResponse DTO for the client."
+  }, {
+    "file_name" : "ErrorResponse.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/ErrorResponse.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A standardized DTO for returning error details to the client.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "timestamp",
+      "type" : "LocalDateTime",
+      "description" : "The time the error occurred."
+    }, {
+      "name" : "status",
+      "type" : "int",
+      "description" : "The HTTP status code."
+    }, {
+      "name" : "error",
+      "type" : "String",
+      "description" : "The HTTP status message."
+    }, {
+      "name" : "message",
+      "type" : "String",
+      "description" : "A developer-friendly error message."
+    }, {
+      "name" : "path",
+      "type" : "String",
+      "description" : "The request path that caused the error."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-infra",
+    "file_role" : "DTO layer - Defines the standard JSON structure for all API error responses. Used by GlobalExceptionHandler to provide consistent error feedback."
+  }, {
+    "file_name" : "DataSeeder.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/config/DataSeeder.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONFIG",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Seeds the database with initial menu categories and items on startup if the database is empty.",
+    "public_functions" : [ {
+      "name" : "run",
+      "parameters" : [ "String... args" ],
+      "return_type" : "void",
+      "description" : "Executes on application startup to populate initial data."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/repository/MenuItemRepository.java", "backend/src/main/java/com/loghouserestaurant/repository/MenuItemCategoryRepository.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-backend-infra",
+    "file_role" : "CONFIG layer - A CommandLineRunner that populates the database with realistic sample data for Log House Restaurant, such as menu items and categories, if none exist."
+  }, {
+    "file_name" : "MenuItem.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/MenuItem.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Represents a single item on the restaurant's menu.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Primary key."
+    }, {
+      "name" : "name",
+      "type" : "String",
+      "description" : "Name of the dish. Not null."
+    }, {
+      "name" : "description",
+      "type" : "String",
+      "description" : "A brief description of the dish."
+    }, {
+      "name" : "price",
+      "type" : "BigDecimal",
+      "description" : "Price of the dish. Not null, positive."
+    }, {
+      "name" : "imageUrl",
+      "type" : "String",
+      "description" : "URL to a high-quality image of the dish."
+    }, {
+      "name" : "isVeg",
+      "type" : "boolean",
+      "description" : "True if the dish is vegetarian."
+    }, {
+      "name" : "isAvailable",
+      "type" : "boolean",
+      "description" : "True if the dish is currently available for ordering."
+    }, {
+      "name" : "category",
+      "type" : "MenuItemCategory",
+      "description" : "The category this menu item belongs to. Many-to-one relationship."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/MenuItemCategory.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-management-core",
+    "file_role" : "MODEL layer - Defines the schema for a menu item, including its name, price, image, and relationship to a MenuItemCategory."
+  }, {
+    "file_name" : "MenuItemCategory.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/MenuItemCategory.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Represents a category of menu items (e.g., Appetizers, Main Course).",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Primary key."
+    }, {
+      "name" : "name",
+      "type" : "String",
+      "description" : "Name of the category. Not null, unique."
+    }, {
+      "name" : "menuItems",
+      "type" : "List<MenuItem>",
+      "description" : "The list of menu items in this category. One-to-many relationship."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-management-core",
+    "file_role" : "MODEL layer - Defines the schema for a menu category. It has a one-to-many relationship with MenuItem entities."
+  }, {
+    "file_name" : "MenuItemRepository.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/repository/MenuItemRepository.java",
+    "file_type" : "BACKEND",
+    "layer" : "REPOSITORY",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Spring Data JPA repository for MenuItem entities.",
+    "public_functions" : [ {
+      "name" : "findByCategoryNameAndIsAvailableTrue",
+      "parameters" : [ "String categoryName" ],
+      "return_type" : "List<MenuItem>",
+      "description" : "Finds all available menu items by category name."
+    }, {
+      "name" : "findAllByIsAvailableTrue",
+      "parameters" : [ ],
+      "return_type" : "List<MenuItem>",
+      "description" : "Finds all available menu items."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/MenuItem.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-management-core",
+    "file_role" : "REPOSITORY layer - Provides data access methods for MenuItem entities, including custom queries to filter by availability and category."
+  }, {
+    "file_name" : "MenuItemCategoryRepository.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/repository/MenuItemCategoryRepository.java",
+    "file_type" : "BACKEND",
+    "layer" : "REPOSITORY",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Spring Data JPA repository for MenuItemCategory entities.",
+    "public_functions" : [ ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/MenuItemCategory.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-management-core",
+    "file_role" : "REPOSITORY layer - Provides standard CRUD data access methods for MenuItemCategory entities."
+  }, {
+    "file_name" : "MenuService.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/service/MenuService.java",
+    "file_type" : "BACKEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service layer for menu-related business logic.",
+    "public_functions" : [ {
+      "name" : "getAllAvailableMenuItems",
+      "parameters" : [ "Optional<String> category" ],
+      "return_type" : "List<MenuItemDto>",
+      "description" : "Gets all available menu items, optionally filtered by category."
+    }, {
+      "name" : "getAllCategories",
+      "parameters" : [ ],
+      "return_type" : "List<MenuItemCategoryDto>",
+      "description" : "Gets all menu categories."
+    }, {
+      "name" : "createMenuItem",
+      "parameters" : [ "MenuItemDto menuItemDto" ],
+      "return_type" : "MenuItemDto",
+      "description" : "Creates a new menu item (Admin)."
+    }, {
+      "name" : "updateMenuItem",
+      "parameters" : [ "UUID id", "MenuItemDto menuItemDto" ],
+      "return_type" : "MenuItemDto",
+      "description" : "Updates an existing menu item (Admin)."
+    }, {
+      "name" : "deleteMenuItem",
+      "parameters" : [ "UUID id" ],
+      "return_type" : "void",
+      "description" : "Deletes a menu item (Admin)."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/repository/MenuItemRepository.java", "backend/src/main/java/com/loghouserestaurant/repository/MenuItemCategoryRepository.java", "backend/src/main/java/com/loghouserestaurant/dto/MenuItemDto.java", "backend/src/main/java/com/loghouserestaurant/dto/MenuItemCategoryDto.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-management-core",
+    "file_role" : "SERVICE layer - Encapsulates business logic for menu management. Provides methods like getAllAvailableMenuItems() for public controllers and CRUD methods like createMenuItem() for admin controllers."
+  }, {
+    "file_name" : "MenuItemDto.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/MenuItemDto.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for representing a menu item in API responses and requests.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Item ID."
+    }, {
+      "name" : "name",
+      "type" : "String",
+      "description" : "Item name. @NotBlank."
+    }, {
+      "name" : "description",
+      "type" : "String",
+      "description" : "Item description."
+    }, {
+      "name" : "price",
+      "type" : "BigDecimal",
+      "description" : "Item price. @NotNull @Positive."
+    }, {
+      "name" : "imageUrl",
+      "type" : "String",
+      "description" : "Item image URL. @URL."
+    }, {
+      "name" : "isVeg",
+      "type" : "boolean",
+      "description" : "Vegetarian status."
+    }, {
+      "name" : "isAvailable",
+      "type" : "boolean",
+      "description" : "Availability status."
+    }, {
+      "name" : "categoryId",
+      "type" : "UUID",
+      "description" : "ID of the category. @NotNull."
+    }, {
+      "name" : "categoryName",
+      "type" : "String",
+      "description" : "Name of the category (read-only)."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-management-api",
+    "file_role" : "DTO layer - Defines the data contract for menu items exchanged via the API. Used as a request body for creation/updates and as a response body for all menu endpoints."
+  }, {
+    "file_name" : "MenuItemCategoryDto.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/MenuItemCategoryDto.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for representing a menu category.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Category ID."
+    }, {
+      "name" : "name",
+      "type" : "String",
+      "description" : "Category name. @NotBlank."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-management-api",
+    "file_role" : "DTO layer - Defines the data contract for menu categories. Used as a response body when listing available categories."
+  }, {
+    "file_name" : "MenuController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/MenuController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Public-facing REST controller for accessing menu information.",
+    "public_functions" : [ {
+      "name" : "getMenu",
+      "parameters" : [ "Optional<String> category" ],
+      "return_type" : "ResponseEntity<List<MenuItemDto>>",
+      "description" : "Gets all available menu items."
+    }, {
+      "name" : "getCategories",
+      "parameters" : [ ],
+      "return_type" : "ResponseEntity<List<MenuItemCategoryDto>>",
+      "description" : "Gets all menu categories."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "GET",
+      "path" : "/api/v1/menu",
+      "request_body" : null,
+      "response_body" : "List<MenuItemDto>",
+      "description" : "Returns all available menu items. Can be filtered by a 'category' query parameter."
+    }, {
+      "method" : "GET",
+      "path" : "/api/v1/menu/categories",
+      "request_body" : null,
+      "response_body" : "List<MenuItemCategoryDto>",
+      "description" : "Returns all menu categories."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/service/MenuService.java", "backend/src/main/java/com/loghouserestaurant/dto/MenuItemDto.java", "backend/src/main/java/com/loghouserestaurant/dto/MenuItemCategoryDto.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-management-api",
+    "file_role" : "CONTROLLER layer - Exposes public, read-only endpoints for the menu. It delegates calls to MenuService to fetch data for the frontend menu page."
+  }, {
+    "file_name" : "AdminMenuController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/AdminMenuController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Admin-only REST controller for managing the menu.",
+    "public_functions" : [ {
+      "name" : "createMenuItem",
+      "parameters" : [ "MenuItemDto menuItemDto" ],
+      "return_type" : "ResponseEntity<MenuItemDto>",
+      "description" : "Creates a new menu item."
+    }, {
+      "name" : "updateMenuItem",
+      "parameters" : [ "UUID id", "MenuItemDto menuItemDto" ],
+      "return_type" : "ResponseEntity<MenuItemDto>",
+      "description" : "Updates an existing menu item."
+    }, {
+      "name" : "deleteMenuItem",
+      "parameters" : [ "UUID id" ],
+      "return_type" : "ResponseEntity<Void>",
+      "description" : "Deletes a menu item."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "POST",
+      "path" : "/api/v1/admin/menu",
+      "request_body" : "MenuItemDto",
+      "response_body" : "MenuItemDto",
+      "description" : "Creates a new menu item."
+    }, {
+      "method" : "PUT",
+      "path" : "/api/v1/admin/menu/{id}",
+      "request_body" : "MenuItemDto",
+      "response_body" : "MenuItemDto",
+      "description" : "Updates a menu item by its ID."
+    }, {
+      "method" : "DELETE",
+      "path" : "/api/v1/admin/menu/{id}",
+      "request_body" : null,
+      "response_body" : "204 No Content",
+      "description" : "Deletes a menu item by its ID."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/service/MenuService.java", "backend/src/main/java/com/loghouserestaurant/dto/MenuItemDto.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-management-api",
+    "file_role" : "CONTROLLER layer - Exposes admin-only CRUD endpoints for menu items, protected by @PreAuthorize('hasAuthority(\"ADMIN\")'). It delegates all business logic to the MenuService."
+  }, {
+    "file_name" : "Reservation.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/Reservation.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Represents a table reservation made by a customer.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Primary key."
+    }, {
+      "name" : "customerName",
+      "type" : "String",
+      "description" : "Name of the customer. Not null."
+    }, {
+      "name" : "customerPhone",
+      "type" : "String",
+      "description" : "Phone number of the customer. Not null."
+    }, {
+      "name" : "customerEmail",
+      "type" : "String",
+      "description" : "Email of the customer."
+    }, {
+      "name" : "reservationTime",
+      "type" : "LocalDateTime",
+      "description" : "The date and time of the reservation. Not null."
+    }, {
+      "name" : "partySize",
+      "type" : "int",
+      "description" : "Number of guests. Not null, positive."
+    }, {
+      "name" : "status",
+      "type" : "ReservationStatus",
+      "description" : "The current status of the reservation (e.g., PENDING, CONFIRMED). Not null."
+    }, {
+      "name" : "specialRequests",
+      "type" : "String",
+      "description" : "Any special requests from the customer."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/ReservationStatus.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-system-core",
+    "file_role" : "MODEL layer - Defines the schema for a customer table reservation, including customer details, time, party size, and status."
+  }, {
+    "file_name" : "ReservationStatus.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/ReservationStatus.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Enum for the status of a reservation.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "PENDING",
+      "type" : "enum",
+      "description" : "Reservation has been requested but not yet confirmed."
+    }, {
+      "name" : "CONFIRMED",
+      "type" : "enum",
+      "description" : "Reservation has been confirmed by the restaurant."
+    }, {
+      "name" : "CANCELLED",
+      "type" : "enum",
+      "description" : "Reservation has been cancelled."
+    }, {
+      "name" : "COMPLETED",
+      "type" : "enum",
+      "description" : "The guests have completed their dining."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-system-core",
+    "file_role" : "MODEL layer - A top-level enum defining the possible states of a Reservation. Referenced by the Reservation entity."
+  }, {
+    "file_name" : "ReservationRepository.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/repository/ReservationRepository.java",
+    "file_type" : "BACKEND",
+    "layer" : "REPOSITORY",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Spring Data JPA repository for Reservation entities.",
+    "public_functions" : [ {
+      "name" : "findAllByOrderByReservationTimeDesc",
+      "parameters" : [ ],
+      "return_type" : "List<Reservation>",
+      "description" : "Finds all reservations, ordered by most recent first."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/Reservation.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-system-core",
+    "file_role" : "REPOSITORY layer - Provides data access methods for Reservation entities, including a query to fetch all reservations for the admin panel."
+  }, {
+    "file_name" : "ReservationService.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/service/ReservationService.java",
+    "file_type" : "BACKEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service layer for reservation-related business logic.",
+    "public_functions" : [ {
+      "name" : "createReservation",
+      "parameters" : [ "CreateReservationRequest request" ],
+      "return_type" : "ReservationResponse",
+      "description" : "Creates a new reservation and sends a confirmation email."
+    }, {
+      "name" : "getAllReservations",
+      "parameters" : [ ],
+      "return_type" : "List<ReservationResponse>",
+      "description" : "Gets all reservations for the admin panel."
+    }, {
+      "name" : "updateReservationStatus",
+      "parameters" : [ "UUID id", "UpdateReservationStatusRequest request" ],
+      "return_type" : "ReservationResponse",
+      "description" : "Updates the status of a reservation (e.g., to CONFIRMED)."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/repository/ReservationRepository.java", "backend/src/main/java/com/loghouserestaurant/dto/CreateReservationRequest.java", "backend/src/main/java/com/loghouserestaurant/dto/ReservationResponse.java", "backend/src/main/java/com/loghouserestaurant/dto/UpdateReservationStatusRequest.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-system-core",
+    "file_role" : "SERVICE layer - Encapsulates business logic for reservations. Provides methods like createReservation() for the public controller and getAllReservations() for the admin controller."
+  }, {
+    "file_name" : "CreateReservationRequest.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/CreateReservationRequest.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for creating a new reservation.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "customerName",
+      "type" : "String",
+      "description" : "@NotBlank"
+    }, {
+      "name" : "customerPhone",
+      "type" : "String",
+      "description" : "@NotBlank"
+    }, {
+      "name" : "customerEmail",
+      "type" : "String",
+      "description" : "@Email"
+    }, {
+      "name" : "reservationTime",
+      "type" : "LocalDateTime",
+      "description" : "@NotNull @Future"
+    }, {
+      "name" : "partySize",
+      "type" : "int",
+      "description" : "@Min(1)"
+    }, {
+      "name" : "specialRequests",
+      "type" : "String",
+      "description" : "Optional special requests."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-system-api",
+    "file_role" : "DTO layer - Defines the request body for POST /api/v1/reservations. Contains validation annotations for all user-provided reservation details."
+  }, {
+    "file_name" : "ReservationResponse.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/ReservationResponse.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for returning reservation details.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Reservation ID."
+    }, {
+      "name" : "customerName",
+      "type" : "String",
+      "description" : "Customer's name."
+    }, {
+      "name" : "customerPhone",
+      "type" : "String",
+      "description" : "Customer's phone."
+    }, {
+      "name" : "reservationTime",
+      "type" : "LocalDateTime",
+      "description" : "Time of reservation."
+    }, {
+      "name" : "partySize",
+      "type" : "int",
+      "description" : "Number of guests."
+    }, {
+      "name" : "status",
+      "type" : "String",
+      "description" : "Status of the reservation."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-system-api",
+    "file_role" : "DTO layer - Defines the response body for all reservation-related endpoints, providing a safe representation of the Reservation entity to the client."
+  }, {
+    "file_name" : "UpdateReservationStatusRequest.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/UpdateReservationStatusRequest.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for updating the status of a reservation.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "status",
+      "type" : "ReservationStatus",
+      "description" : "The new status for the reservation. @NotNull."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/ReservationStatus.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-system-api",
+    "file_role" : "DTO layer - Defines the request body for PATCH /api/v1/admin/reservations/{id}/status, allowing an admin to change a reservation's state."
+  }, {
+    "file_name" : "ReservationController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/ReservationController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Public-facing REST controller for creating reservations.",
+    "public_functions" : [ {
+      "name" : "makeReservation",
+      "parameters" : [ "CreateReservationRequest request" ],
+      "return_type" : "ResponseEntity<ReservationResponse>",
+      "description" : "Accepts and processes a new table reservation request."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "POST",
+      "path" : "/api/v1/reservations",
+      "request_body" : "CreateReservationRequest",
+      "response_body" : "ReservationResponse",
+      "description" : "Creates a new reservation with PENDING status."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/service/ReservationService.java", "backend/src/main/java/com/loghouserestaurant/dto/CreateReservationRequest.java", "backend/src/main/java/com/loghouserestaurant/dto/ReservationResponse.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-system-api",
+    "file_role" : "CONTROLLER layer - Exposes the public endpoint for customers to submit a reservation request. It delegates the creation logic to ReservationService."
+  }, {
+    "file_name" : "AdminReservationController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/AdminReservationController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Admin-only REST controller for managing reservations.",
+    "public_functions" : [ {
+      "name" : "getAllReservations",
+      "parameters" : [ ],
+      "return_type" : "ResponseEntity<List<ReservationResponse>>",
+      "description" : "Retrieves all reservations."
+    }, {
+      "name" : "updateReservationStatus",
+      "parameters" : [ "UUID id", "UpdateReservationStatusRequest request" ],
+      "return_type" : "ResponseEntity<ReservationResponse>",
+      "description" : "Updates the status of a specific reservation."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "GET",
+      "path" : "/api/v1/admin/reservations",
+      "request_body" : null,
+      "response_body" : "List<ReservationResponse>",
+      "description" : "Gets a list of all reservations."
+    }, {
+      "method" : "PATCH",
+      "path" : "/api/v1/admin/reservations/{id}/status",
+      "request_body" : "UpdateReservationStatusRequest",
+      "response_body" : "ReservationResponse",
+      "description" : "Updates a reservation's status (e.g., confirm or cancel)."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/service/ReservationService.java", "backend/src/main/java/com/loghouserestaurant/dto/ReservationResponse.java", "backend/src/main/java/com/loghouserestaurant/dto/UpdateReservationStatusRequest.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-system-api",
+    "file_role" : "CONTROLLER layer - Exposes admin-only endpoints for viewing and managing all customer reservations. Protected by @PreAuthorize('hasAuthority(\"ADMIN\")')."
+  }, {
+    "file_name" : "Order.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/Order.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Represents a customer's food order.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Primary key."
+    }, {
+      "name" : "orderItems",
+      "type" : "List<OrderItem>",
+      "description" : "List of items in the order. One-to-many, cascade all."
+    }, {
+      "name" : "totalAmount",
+      "type" : "BigDecimal",
+      "description" : "The total cost of the order."
+    }, {
+      "name" : "status",
+      "type" : "OrderStatus",
+      "description" : "Current status of the order."
+    }, {
+      "name" : "customerName",
+      "type" : "String",
+      "description" : "Customer's name."
+    }, {
+      "name" : "customerPhone",
+      "type" : "String",
+      "description" : "Customer's phone number."
+    }, {
+      "name" : "deliveryAddress",
+      "type" : "String",
+      "description" : "Customer's delivery address."
+    }, {
+      "name" : "razorpayOrderId",
+      "type" : "String",
+      "description" : "The order ID from Razorpay."
+    }, {
+      "name" : "razorpayPaymentId",
+      "type" : "String",
+      "description" : "The payment ID from Razorpay, set after successful payment."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/OrderItem.java", "backend/src/main/java/com/loghouserestaurant/model/OrderStatus.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-core",
+    "file_role" : "MODEL layer - Defines the schema for a customer order, including customer details, total amount, status, and a one-to-many relationship with OrderItems."
+  }, {
+    "file_name" : "OrderItem.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/OrderItem.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Represents a single line item within an order.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Primary key."
+    }, {
+      "name" : "menuItem",
+      "type" : "MenuItem",
+      "description" : "The menu item being ordered. Many-to-one."
+    }, {
+      "name" : "quantity",
+      "type" : "int",
+      "description" : "The quantity of the menu item ordered."
+    }, {
+      "name" : "price",
+      "type" : "BigDecimal",
+      "description" : "The price of the menu item at the time of order."
+    }, {
+      "name" : "order",
+      "type" : "Order",
+      "description" : "The parent order. Many-to-one."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/MenuItem.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-core",
+    "file_role" : "MODEL layer - Defines the schema for a line item within an Order, linking a specific MenuItem with a quantity and price."
+  }, {
+    "file_name" : "OrderStatus.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/OrderStatus.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Enum for the status of an order.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "PENDING_PAYMENT",
+      "type" : "enum",
+      "description" : "Order created, awaiting payment."
+    }, {
+      "name" : "RECEIVED",
+      "type" : "enum",
+      "description" : "Payment confirmed, order received by restaurant."
+    }, {
+      "name" : "PREPARING",
+      "type" : "enum",
+      "description" : "Order is being prepared."
+    }, {
+      "name" : "OUT_FOR_DELIVERY",
+      "type" : "enum",
+      "description" : "Order is on its way to the customer."
+    }, {
+      "name" : "DELIVERED",
+      "type" : "enum",
+      "description" : "Order has been delivered."
+    }, {
+      "name" : "CANCELLED",
+      "type" : "enum",
+      "description" : "Order was cancelled."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-core",
+    "file_role" : "MODEL layer - A top-level enum defining the lifecycle states of an Order. Referenced by the Order entity."
+  }, {
+    "file_name" : "OrderRepository.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/repository/OrderRepository.java",
+    "file_type" : "BACKEND",
+    "layer" : "REPOSITORY",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Spring Data JPA repository for Order entities.",
+    "public_functions" : [ {
+      "name" : "findByRazorpayOrderId",
+      "parameters" : [ "String razorpayOrderId" ],
+      "return_type" : "Optional<Order>",
+      "description" : "Finds an order by its Razorpay Order ID."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/Order.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-core",
+    "file_role" : "REPOSITORY layer - Provides data access methods for Order entities. The findByRazorpayOrderId(String) method is crucial for the payment webhook to identify the correct order."
+  }, {
+    "file_name" : "OrderItemRepository.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/repository/OrderItemRepository.java",
+    "file_type" : "BACKEND",
+    "layer" : "REPOSITORY",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Spring Data JPA repository for OrderItem entities.",
+    "public_functions" : [ ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/OrderItem.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-core",
+    "file_role" : "REPOSITORY layer - Provides standard CRUD data access methods for OrderItem entities. Primarily used via cascading operations from the OrderRepository."
+  }, {
+    "file_name" : "OrderService.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/service/OrderService.java",
+    "file_type" : "BACKEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service layer for order-related business logic.",
+    "public_functions" : [ {
+      "name" : "createOrder",
+      "parameters" : [ "CreateOrderRequest request" ],
+      "return_type" : "OrderResponse",
+      "description" : "Creates an order, calculates total, and initiates payment with PaymentService."
+    }, {
+      "name" : "verifyPaymentAndUpdateStatus",
+      "parameters" : [ "String razorpayOrderId", "String razorpayPaymentId", "String razorpaySignature" ],
+      "return_type" : "OrderResponse",
+      "description" : "Verifies payment signature and updates order status to RECEIVED."
+    }, {
+      "name" : "getAllOrders",
+      "parameters" : [ ],
+      "return_type" : "List<OrderResponse>",
+      "description" : "Gets all orders for the admin panel."
+    }, {
+      "name" : "updateOrderStatus",
+      "parameters" : [ "UUID id", "UpdateOrderStatusRequest request" ],
+      "return_type" : "OrderResponse",
+      "description" : "Updates the status of an order (Admin)."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/repository/OrderRepository.java", "backend/src/main/java/com/loghouserestaurant/dto/CreateOrderRequest.java", "backend/src/main/java/com/loghouserestaurant/dto/OrderResponse.java", "backend/src/main/java/com/loghouserestaurant/dto/UpdateOrderStatusRequest.java", "backend/src/main/java/com/loghouserestaurant/service/PaymentService.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-core",
+    "file_role" : "SERVICE layer - Orchestrates the entire order lifecycle. Its createOrder() method calculates totals and calls PaymentService, while verifyPaymentAndUpdateStatus() is called by the payment webhook handler."
+  }, {
+    "file_name" : "CreateOrderRequest.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/CreateOrderRequest.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for creating a new order.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "customerName",
+      "type" : "String",
+      "description" : "@NotBlank"
+    }, {
+      "name" : "customerPhone",
+      "type" : "String",
+      "description" : "@NotBlank"
+    }, {
+      "name" : "deliveryAddress",
+      "type" : "String",
+      "description" : "@NotBlank"
+    }, {
+      "name" : "items",
+      "type" : "List<OrderItemRequest>",
+      "description" : "@NotEmpty"
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/dto/OrderItemRequest.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-api",
+    "file_role" : "DTO layer - Defines the request body for POST /api/v1/orders. It contains customer details and a list of items to be ordered."
+  }, {
+    "file_name" : "OrderItemRequest.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/OrderItemRequest.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A record DTO representing a single item in a create order request.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "menuItemId",
+      "type" : "UUID",
+      "description" : "@NotNull"
+    }, {
+      "name" : "quantity",
+      "type" : "int",
+      "description" : "@Min(1)"
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-api",
+    "file_role" : "DTO layer - A top-level record defining the structure for an item within a CreateOrderRequest, specifying the menu item ID and quantity."
+  }, {
+    "file_name" : "OrderResponse.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/OrderResponse.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for returning order details.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "orderId",
+      "type" : "UUID",
+      "description" : "Internal order ID."
+    }, {
+      "name" : "razorpayOrderId",
+      "type" : "String",
+      "description" : "Razorpay order ID, needed by frontend for checkout."
+    }, {
+      "name" : "totalAmount",
+      "type" : "BigDecimal",
+      "description" : "Total order amount."
+    }, {
+      "name" : "status",
+      "type" : "String",
+      "description" : "Order status."
+    }, {
+      "name" : "items",
+      "type" : "List<OrderItemResponse>",
+      "description" : "List of items in the order."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/dto/OrderItemResponse.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-api",
+    "file_role" : "DTO layer - Defines the response body for order endpoints. Crucially, it returns the razorpayOrderId to the frontend to initiate the payment popup."
+  }, {
+    "file_name" : "OrderItemResponse.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/OrderItemResponse.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for representing a single order item in a response.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "menuItemName",
+      "type" : "String",
+      "description" : "Name of the item."
+    }, {
+      "name" : "quantity",
+      "type" : "int",
+      "description" : "Quantity ordered."
+    }, {
+      "name" : "price",
+      "type" : "BigDecimal",
+      "description" : "Price per item."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-api",
+    "file_role" : "DTO layer - Defines the structure for a line item within an OrderResponse, providing human-readable details to the client."
+  }, {
+    "file_name" : "UpdateOrderStatusRequest.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/UpdateOrderStatusRequest.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for updating an order's status.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "status",
+      "type" : "OrderStatus",
+      "description" : "The new status. @NotNull."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/OrderStatus.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-api",
+    "file_role" : "DTO layer - Defines the request body for PATCH /api/v1/admin/orders/{id}/status, allowing an admin to advance an order through its lifecycle."
+  }, {
+    "file_name" : "OrderController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/OrderController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Public-facing REST controller for creating orders.",
+    "public_functions" : [ {
+      "name" : "placeOrder",
+      "parameters" : [ "CreateOrderRequest request" ],
+      "return_type" : "ResponseEntity<OrderResponse>",
+      "description" : "Creates a new order and returns details needed for payment."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "POST",
+      "path" : "/api/v1/orders",
+      "request_body" : "CreateOrderRequest",
+      "response_body" : "OrderResponse",
+      "description" : "Initiates an order, creating a corresponding Razorpay order."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/service/OrderService.java", "backend/src/main/java/com/loghouserestaurant/dto/CreateOrderRequest.java", "backend/src/main/java/com/loghouserestaurant/dto/OrderResponse.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-api",
+    "file_role" : "CONTROLLER layer - Exposes the public endpoint for customers to place an order. It delegates to OrderService, which returns the necessary details for the frontend to start payment."
+  }, {
+    "file_name" : "AdminOrderController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/AdminOrderController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Admin-only REST controller for managing orders.",
+    "public_functions" : [ {
+      "name" : "getAllOrders",
+      "parameters" : [ ],
+      "return_type" : "ResponseEntity<List<OrderResponse>>",
+      "description" : "Retrieves all orders."
+    }, {
+      "name" : "updateOrderStatus",
+      "parameters" : [ "UUID id", "UpdateOrderStatusRequest request" ],
+      "return_type" : "ResponseEntity<OrderResponse>",
+      "description" : "Updates an order's status."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "GET",
+      "path" : "/api/v1/admin/orders",
+      "request_body" : null,
+      "response_body" : "List<OrderResponse>",
+      "description" : "Gets a list of all orders."
+    }, {
+      "method" : "PATCH",
+      "path" : "/api/v1/admin/orders/{id}/status",
+      "request_body" : "UpdateOrderStatusRequest",
+      "response_body" : "OrderResponse",
+      "description" : "Updates an order's status."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/service/OrderService.java", "backend/src/main/java/com/loghouserestaurant/dto/OrderResponse.java", "backend/src/main/java/com/loghouserestaurant/dto/UpdateOrderStatusRequest.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-management-api",
+    "file_role" : "CONTROLLER layer - Exposes admin-only endpoints for viewing and managing all customer orders. Protected by @PreAuthorize('hasAuthority(\"ADMIN\")')."
+  }, {
+    "file_name" : "PaymentService.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/service/PaymentService.java",
+    "file_type" : "BACKEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service for interacting with the Razorpay payment gateway.",
+    "public_functions" : [ {
+      "name" : "createRazorpayOrder",
+      "parameters" : [ "BigDecimal amount" ],
+      "return_type" : "String",
+      "description" : "Creates an order on Razorpay and returns the Razorpay order ID."
+    }, {
+      "name" : "verifyPaymentSignature",
+      "parameters" : [ "String razorpayOrderId", "String razorpayPaymentId", "String razorpaySignature" ],
+      "return_type" : "boolean",
+      "description" : "Verifies the signature of a payment webhook to confirm authenticity."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "payment-processing",
+    "file_role" : "SERVICE layer - Abstracts all interactions with the Razorpay API. Its createRazorpayOrder(BigDecimal) method is called by OrderService, and verifyPaymentSignature(...) is used by the webhook controller."
+  }, {
+    "file_name" : "PaymentController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/PaymentController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Handles webhooks from the Razorpay payment gateway.",
+    "public_functions" : [ {
+      "name" : "handleRazorpayWebhook",
+      "parameters" : [ "String payload", "String signature" ],
+      "return_type" : "ResponseEntity<Void>",
+      "description" : "Receives and processes payment confirmation webhooks from Razorpay."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "POST",
+      "path" : "/api/v1/payments/webhook",
+      "request_body" : "JSON payload from Razorpay",
+      "response_body" : "200 OK",
+      "description" : "Endpoint for Razorpay to send payment status updates."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/service/OrderService.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "payment-processing",
+    "file_role" : "CONTROLLER layer - Provides the webhook endpoint for Razorpay. It receives payment confirmation, verifies the signature, and calls OrderService.verifyPaymentAndUpdateStatus() to complete the order."
+  }, {
+    "file_name" : "Promotion.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/model/Promotion.java",
+    "file_type" : "BACKEND",
+    "layer" : "MODEL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Represents a promotional offer or banner.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Primary key."
+    }, {
+      "name" : "title",
+      "type" : "String",
+      "description" : "The main headline of the promotion."
+    }, {
+      "name" : "description",
+      "type" : "String",
+      "description" : "A short description of the offer."
+    }, {
+      "name" : "isActive",
+      "type" : "boolean",
+      "description" : "Whether the promotion is currently active and should be displayed."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-management-core",
+    "file_role" : "MODEL layer - Defines the schema for a simple promotional banner, including its title, description, and active status."
+  }, {
+    "file_name" : "PromotionRepository.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/repository/PromotionRepository.java",
+    "file_type" : "BACKEND",
+    "layer" : "REPOSITORY",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Spring Data JPA repository for Promotion entities.",
+    "public_functions" : [ {
+      "name" : "findFirstByIsActiveTrue",
+      "parameters" : [ ],
+      "return_type" : "Optional<Promotion>",
+      "description" : "Finds the first active promotion."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/model/Promotion.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-management-core",
+    "file_role" : "REPOSITORY layer - Provides data access methods for Promotion entities, including a query to find the currently active promotion for the homepage."
+  }, {
+    "file_name" : "PromotionService.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/service/PromotionService.java",
+    "file_type" : "BACKEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service layer for managing promotions.",
+    "public_functions" : [ {
+      "name" : "getActivePromotion",
+      "parameters" : [ ],
+      "return_type" : "Optional<PromotionDto>",
+      "description" : "Gets the current active promotion."
+    }, {
+      "name" : "getAllPromotions",
+      "parameters" : [ ],
+      "return_type" : "List<PromotionDto>",
+      "description" : "Gets all promotions for the admin panel."
+    }, {
+      "name" : "createPromotion",
+      "parameters" : [ "PromotionDto promotionDto" ],
+      "return_type" : "PromotionDto",
+      "description" : "Creates a new promotion."
+    }, {
+      "name" : "updatePromotion",
+      "parameters" : [ "UUID id", "PromotionDto promotionDto" ],
+      "return_type" : "PromotionDto",
+      "description" : "Updates an existing promotion."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/repository/PromotionRepository.java", "backend/src/main/java/com/loghouserestaurant/dto/PromotionDto.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-management-core",
+    "file_role" : "SERVICE layer - Encapsulates business logic for promotions. Provides getActivePromotion() for the public controller and CRUD methods for the admin controller."
+  }, {
+    "file_name" : "PromotionDto.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/dto/PromotionDto.java",
+    "file_type" : "BACKEND",
+    "layer" : "DTO",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "DTO for representing a promotion.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "id",
+      "type" : "UUID",
+      "description" : "Promotion ID."
+    }, {
+      "name" : "title",
+      "type" : "String",
+      "description" : "@NotBlank"
+    }, {
+      "name" : "description",
+      "type" : "String",
+      "description" : "@NotBlank"
+    }, {
+      "name" : "isActive",
+      "type" : "boolean",
+      "description" : "Active status."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-management-api",
+    "file_role" : "DTO layer - Defines the data contract for promotions exchanged via the API. Used for both requests and responses in the promotion controllers."
+  }, {
+    "file_name" : "PromotionController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/PromotionController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Public-facing REST controller for fetching the active promotion.",
+    "public_functions" : [ {
+      "name" : "getActivePromotion",
+      "parameters" : [ ],
+      "return_type" : "ResponseEntity<PromotionDto>",
+      "description" : "Gets the currently active promotion."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "GET",
+      "path" : "/api/v1/promotions/active",
+      "request_body" : null,
+      "response_body" : "PromotionDto",
+      "description" : "Returns the currently active promotion, or 204 No Content if none."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/service/PromotionService.java", "backend/src/main/java/com/loghouserestaurant/dto/PromotionDto.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-management-api",
+    "file_role" : "CONTROLLER layer - Exposes the public endpoint for the frontend to fetch the active promotion banner for the homepage."
+  }, {
+    "file_name" : "AdminPromotionController.java",
+    "file_path" : "backend/src/main/java/com/loghouserestaurant/controller/AdminPromotionController.java",
+    "file_type" : "BACKEND",
+    "layer" : "CONTROLLER",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Admin-only REST controller for managing promotions.",
+    "public_functions" : [ {
+      "name" : "getAllPromotions",
+      "parameters" : [ ],
+      "return_type" : "ResponseEntity<List<PromotionDto>>",
+      "description" : "Gets all promotions."
+    }, {
+      "name" : "createPromotion",
+      "parameters" : [ "PromotionDto promotionDto" ],
+      "return_type" : "ResponseEntity<PromotionDto>",
+      "description" : "Creates a new promotion."
+    }, {
+      "name" : "updatePromotion",
+      "parameters" : [ "UUID id", "PromotionDto promotionDto" ],
+      "return_type" : "ResponseEntity<PromotionDto>",
+      "description" : "Updates a promotion."
+    } ],
+    "public_variables" : null,
+    "api_endpoints" : [ {
+      "method" : "GET",
+      "path" : "/api/v1/admin/promotions",
+      "request_body" : null,
+      "response_body" : "List<PromotionDto>",
+      "description" : "Gets all promotions."
+    }, {
+      "method" : "POST",
+      "path" : "/api/v1/admin/promotions",
+      "request_body" : "PromotionDto",
+      "response_body" : "PromotionDto",
+      "description" : "Creates a new promotion."
+    }, {
+      "method" : "PUT",
+      "path" : "/api/v1/admin/promotions/{id}",
+      "request_body" : "PromotionDto",
+      "response_body" : "PromotionDto",
+      "description" : "Updates a promotion."
+    } ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "backend/src/main/java/com/loghouserestaurant/service/PromotionService.java", "backend/src/main/java/com/loghouserestaurant/dto/PromotionDto.java" ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-management-api",
+    "file_role" : "CONTROLLER layer - Exposes admin-only CRUD endpoints for managing promotions. Protected by @PreAuthorize('hasAuthority(\"ADMIN\")')."
+  }, {
+    "file_name" : "client.ts",
+    "file_path" : "frontend/src/api/client.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Configures and exports a singleton Axios instance for all API communication.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "apiClient",
+      "type" : "AxiosInstance",
+      "description" : "The configured Axios instance with a base URL and auth interceptor."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-frontend-infra",
+    "file_role" : "SERVICE layer - Creates and configures the global Axios client. It adds an interceptor that attaches the JWT 'token' from localStorage to the Authorization header of every outgoing request."
+  }, {
+    "file_name" : "App.tsx",
+    "file_path" : "frontend/src/App.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "The root component of the React application, responsible for setting up providers and routing.",
+    "public_functions" : [ {
+      "name" : "App",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "The main application component."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/context/AuthContext.tsx", "frontend/src/pages/HomePage.tsx", "frontend/src/pages/MenuPage.tsx", "frontend/src/pages/ReservationPage.tsx", "frontend/src/pages/OrderPage.tsx", "frontend/src/pages/LoginPage.tsx", "frontend/src/pages/admin/AdminDashboardPage.tsx", "frontend/src/components/ProtectedRoute.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-frontend-infra",
+    "file_role" : "PAGE layer - The application's entry point. It wraps all pages in necessary providers (QueryClientProvider, AuthProvider) and defines the application's routes using React Router."
+  }, {
+    "file_name" : "Layout.tsx",
+    "file_path" : "frontend/src/components/Layout.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "COMPONENT",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A shared layout component for all public-facing pages.",
+    "public_functions" : [ {
+      "name" : "Layout",
+      "parameters" : [ "{ children: React.ReactNode }" ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders the header, footer, and the page content passed as children."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/components/Header.tsx", "frontend/src/components/Footer.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-frontend-infra",
+    "file_role" : "COMPONENT layer - Provides the consistent structure for all public pages. It renders the Header, the page-specific content via its children prop, and the Footer."
+  }, {
+    "file_name" : "Header.tsx",
+    "file_path" : "frontend/src/components/Header.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "COMPONENT",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "The main navigation header for the website.",
+    "public_functions" : [ {
+      "name" : "Header",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "A responsive, sticky navigation bar."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-frontend-infra",
+    "file_role" : "COMPONENT layer - Renders the site's top navigation bar. It includes the business name 'Log House Restaurant', navigation links, and a prominent 'Order Online' CTA button, with a mobile-friendly hamburger menu."
+  }, {
+    "file_name" : "Footer.tsx",
+    "file_path" : "frontend/src/components/Footer.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "COMPONENT",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "The main footer for the website, containing contact information and a map.",
+    "public_functions" : [ {
+      "name" : "Footer",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "A three-column footer with business details."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "shared-frontend-infra",
+    "file_role" : "COMPONENT layer - Renders the site's footer. It displays the business address and phone, opening hours, and an embedded Google Maps iframe pointing to the Baner, Pune location."
+  }, {
+    "file_name" : "AdminLayout.tsx",
+    "file_path" : "frontend/src/components/admin/AdminLayout.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "COMPONENT",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A shared layout for all admin pages, featuring a sidebar navigation.",
+    "public_functions" : [ {
+      "name" : "AdminLayout",
+      "parameters" : [ "{ children: React.ReactNode }" ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders the admin sidebar and the page content."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/hooks/useAuth.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "admin-portal",
+    "file_role" : "COMPONENT layer - Provides the consistent structure for the admin section. It renders a persistent sidebar with navigation links to all admin pages (Dashboard, Menu, Orders, etc.) and a main content area for the specific admin page."
+  }, {
+    "file_name" : "AuthContext.tsx",
+    "file_path" : "frontend/src/context/AuthContext.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "CONTEXT",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "React context for managing authentication state globally.",
+    "public_functions" : [ {
+      "name" : "AuthProvider",
+      "parameters" : [ "{ children: React.ReactNode }" ],
+      "return_type" : "JSX.Element",
+      "description" : "Provider component that makes auth state available to its children."
+    } ],
+    "public_variables" : [ {
+      "name" : "AuthContext",
+      "type" : "React.Context",
+      "description" : "The context object containing auth state and functions."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/services/authService.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "auth-ui",
+    "file_role" : "CONTEXT layer - Manages global authentication state (token, role). It provides login(email, password) and logout() functions and persists the token to localStorage, making auth status available throughout the app."
+  }, {
+    "file_name" : "useAuth.ts",
+    "file_path" : "frontend/src/hooks/useAuth.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "HOOK",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A custom hook to easily access the authentication context.",
+    "public_functions" : [ {
+      "name" : "useAuth",
+      "parameters" : [ ],
+      "return_type" : "AuthContextType",
+      "description" : "Returns the current authentication context value."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/context/AuthContext.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "auth-ui",
+    "file_role" : "HOOK layer - A simple hook that provides convenient access to the AuthContext. Components call useAuth() to get the current user, login/logout functions, and authentication status."
+  }, {
+    "file_name" : "authService.ts",
+    "file_path" : "frontend/src/services/authService.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service for handling authentication API calls.",
+    "public_functions" : [ {
+      "name" : "login",
+      "parameters" : [ "AuthRequest" ],
+      "return_type" : "Promise<AuthResponse>",
+      "description" : "Sends a login request to the backend."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ {
+      "method" : "POST",
+      "path" : "/api/v1/auth/login",
+      "request_body" : null,
+      "response_body" : null,
+      "description" : "Authenticates a user."
+    } ],
+    "imports_from" : [ "frontend/src/api/client.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "auth-ui",
+    "file_role" : "SERVICE layer - Makes the HTTP call for authentication. Its login(credentials) function calls the POST /api/v1/auth/login endpoint and returns the auth token and user role."
+  }, {
+    "file_name" : "ProtectedRoute.tsx",
+    "file_path" : "frontend/src/components/ProtectedRoute.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "COMPONENT",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A component that renders its children only if the user is authenticated, otherwise redirects to the login page.",
+    "public_functions" : [ {
+      "name" : "ProtectedRoute",
+      "parameters" : [ "{ children: JSX.Element }" ],
+      "return_type" : "JSX.Element",
+      "description" : "Wraps a route to protect it from unauthenticated access."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/hooks/useAuth.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "auth-ui",
+    "file_role" : "COMPONENT layer - A route guard. It uses the useAuth() hook to check if a user is authenticated. If not, it redirects to /login, effectively protecting all admin routes."
+  }, {
+    "file_name" : "LoginPage.tsx",
+    "file_path" : "frontend/src/pages/LoginPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "The login page for administrators.",
+    "public_functions" : [ {
+      "name" : "LoginPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders the admin login form."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/hooks/useAuth.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "auth-ui",
+    "file_role" : "PAGE layer - Displays a form for the admin to enter their email and password. On submit, it calls the login function from the useAuth() hook and redirects to the admin dashboard on success."
+  }, {
+    "file_name" : "AdminDashboardPage.tsx",
+    "file_path" : "frontend/src/pages/admin/AdminDashboardPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "The main dashboard page for the admin area.",
+    "public_functions" : [ {
+      "name" : "AdminDashboardPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "The landing page for authenticated admins."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/components/admin/AdminLayout.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "admin-portal",
+    "file_role" : "PAGE layer - The central hub for the admin panel. It displays summary information or welcome text and is wrapped by the AdminLayout, which provides navigation to other admin sections."
+  }, {
+    "file_name" : "menu.ts",
+    "file_path" : "frontend/src/types/menu.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "UTIL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "TypeScript types and interfaces for the menu domain.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "MenuItem",
+      "type" : "interface",
+      "description" : "Represents a single menu item."
+    }, {
+      "name" : "MenuItemCategory",
+      "type" : "interface",
+      "description" : "Represents a menu category."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-display",
+    "file_role" : "UTIL layer - Exports all TypeScript interfaces (MenuItem, MenuItemCategory) for the menu feature. It serves as the single source of truth for menu-related data shapes on the frontend."
+  }, {
+    "file_name" : "menuService.ts",
+    "file_path" : "frontend/src/services/menuService.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service for fetching menu data from the API.",
+    "public_functions" : [ {
+      "name" : "getMenuItems",
+      "parameters" : [ "category?: string" ],
+      "return_type" : "Promise<MenuItem[]>",
+      "description" : "Fetches all available menu items."
+    }, {
+      "name" : "getMenuCategories",
+      "parameters" : [ ],
+      "return_type" : "Promise<MenuItemCategory[]>",
+      "description" : "Fetches all menu categories."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ {
+      "method" : "GET",
+      "path" : "/api/v1/menu",
+      "request_body" : null,
+      "response_body" : null,
+      "description" : "Fetches menu items."
+    }, {
+      "method" : "GET",
+      "path" : "/api/v1/menu/categories",
+      "request_body" : null,
+      "response_body" : null,
+      "description" : "Fetches menu categories."
+    } ],
+    "imports_from" : [ "frontend/src/api/client.ts", "frontend/src/types/menu.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-display",
+    "file_role" : "SERVICE layer - Makes all HTTP calls for the menu feature. Its getMenuItems() and getMenuCategories() functions call the corresponding backend endpoints and return typed data."
+  }, {
+    "file_name" : "useMenu.ts",
+    "file_path" : "frontend/src/hooks/useMenu.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "HOOK",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Custom hook for fetching and managing menu data state.",
+    "public_functions" : [ {
+      "name" : "useMenu",
+      "parameters" : [ "category?: string" ],
+      "return_type" : "{ data: MenuItem[], isLoading: boolean, error: Error | null }",
+      "description" : "A React Query hook for fetching menu items."
+    }, {
+      "name" : "useMenuCategories",
+      "parameters" : [ ],
+      "return_type" : "{ data: MenuItemCategory[], isLoading: boolean, error: Error | null }",
+      "description" : "A React Query hook for fetching menu categories."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/services/menuService.ts", "frontend/src/types/menu.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-display",
+    "file_role" : "HOOK layer - Provides reactive data fetching for the menu. It uses React Query and menuService to fetch data, manage caching, and expose loading/error states to UI components."
+  }, {
+    "file_name" : "MenuPage.tsx",
+    "file_path" : "frontend/src/pages/MenuPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "The page that displays the restaurant's interactive digital menu.",
+    "public_functions" : [ {
+      "name" : "MenuPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders the full menu with categories and items."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/hooks/useMenu.ts", "frontend/src/components/Layout.tsx", "frontend/src/context/CartContext.tsx", "frontend/src/types/menu.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "menu-display",
+    "file_role" : "PAGE layer - The main UI for customers to browse the menu. It uses the useMenu() and useMenuCategories() hooks to fetch data and renders it in a filterable grid of cards, with 'Add to Cart' functionality."
+  }, {
+    "file_name" : "AdminMenuPage.tsx",
+    "file_path" : "frontend/src/pages/admin/AdminMenuPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Admin page for managing menu items.",
+    "public_functions" : [ {
+      "name" : "AdminMenuPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders a data table for CRUD operations on menu items."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/components/admin/AdminLayout.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "admin-portal",
+    "file_role" : "PAGE layer - Provides the UI for administrators to create, read, update, and delete menu items. It features a data table and a modal form for editing/creating items."
+  }, {
+    "file_name" : "reservation.ts",
+    "file_path" : "frontend/src/types/reservation.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "UTIL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "TypeScript types for the reservation domain.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "Reservation",
+      "type" : "interface",
+      "description" : "Represents a reservation."
+    }, {
+      "name" : "CreateReservationPayload",
+      "type" : "type",
+      "description" : "The payload for creating a new reservation."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-booking",
+    "file_role" : "UTIL layer - Exports all TypeScript interfaces (Reservation, CreateReservationPayload) for the reservation feature, ensuring type safety across the frontend."
+  }, {
+    "file_name" : "reservationService.ts",
+    "file_path" : "frontend/src/services/reservationService.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service for reservation API calls.",
+    "public_functions" : [ {
+      "name" : "createReservation",
+      "parameters" : [ "payload: CreateReservationPayload" ],
+      "return_type" : "Promise<Reservation>",
+      "description" : "Submits a new reservation request."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ {
+      "method" : "POST",
+      "path" : "/api/v1/reservations",
+      "request_body" : null,
+      "response_body" : null,
+      "description" : "Creates a new reservation."
+    } ],
+    "imports_from" : [ "frontend/src/api/client.ts", "frontend/src/types/reservation.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-booking",
+    "file_role" : "SERVICE layer - Makes the HTTP call to create a reservation. Its createReservation(payload) function calls the POST /api/v1/reservations endpoint."
+  }, {
+    "file_name" : "useReservations.ts",
+    "file_path" : "frontend/src/hooks/useReservations.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "HOOK",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Custom hook for managing reservation state.",
+    "public_functions" : [ {
+      "name" : "useCreateReservation",
+      "parameters" : [ ],
+      "return_type" : "UseMutationResult<Reservation, Error, CreateReservationPayload>",
+      "description" : "A React Query mutation hook for creating a reservation."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/services/reservationService.ts", "frontend/src/types/reservation.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-booking",
+    "file_role" : "HOOK layer - Provides the mutation logic for creating a reservation. It uses React Query's useMutation and reservationService to handle the API call and manage loading/success/error states."
+  }, {
+    "file_name" : "ReservationPage.tsx",
+    "file_path" : "frontend/src/pages/ReservationPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "The page for customers to book a table.",
+    "public_functions" : [ {
+      "name" : "ReservationPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders the table reservation form."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/hooks/useReservations.ts", "frontend/src/components/Layout.tsx", "frontend/src/types/reservation.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "reservation-booking",
+    "file_role" : "PAGE layer - Displays the form for booking a table. It uses react-hook-form for user input and calls the mutation from the useCreateReservation() hook on submission."
+  }, {
+    "file_name" : "AdminReservationsPage.tsx",
+    "file_path" : "frontend/src/pages/admin/AdminReservationsPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Admin page for managing reservations.",
+    "public_functions" : [ {
+      "name" : "AdminReservationsPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders a data table for viewing and managing reservations."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/components/admin/AdminLayout.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "admin-portal",
+    "file_role" : "PAGE layer - Provides the UI for administrators to view all reservations and update their status (e.g., from PENDING to CONFIRMED)."
+  }, {
+    "file_name" : "order.ts",
+    "file_path" : "frontend/src/types/order.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "UTIL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "TypeScript types for the order and cart domain.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "CartItem",
+      "type" : "interface",
+      "description" : "Represents an item in the shopping cart."
+    }, {
+      "name" : "Order",
+      "type" : "interface",
+      "description" : "Represents a customer order."
+    }, {
+      "name" : "CreateOrderPayload",
+      "type" : "type",
+      "description" : "The payload for creating a new order."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "order-flow",
+    "file_role" : "UTIL layer - Exports all TypeScript interfaces (CartItem, Order, CreateOrderPayload) for the ordering feature, defining the shapes for the cart, checkout form, and API communication."
+  }, {
+    "file_name" : "CartContext.tsx",
+    "file_path" : "frontend/src/context/CartContext.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "CONTEXT",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "React context for managing the shopping cart state.",
+    "public_functions" : [ {
+      "name" : "CartProvider",
+      "parameters" : [ "{ children: React.ReactNode }" ],
+      "return_type" : "JSX.Element",
+      "description" : "Provider component that makes cart state available."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/types/order.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-flow",
+    "file_role" : "CONTEXT layer - Manages the global state of the shopping cart. It exposes functions like addItem(item), removeItem(itemId), and clearCart() to be used by components across the application."
+  }, {
+    "file_name" : "orderService.ts",
+    "file_path" : "frontend/src/services/orderService.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service for order API calls.",
+    "public_functions" : [ {
+      "name" : "createOrder",
+      "parameters" : [ "payload: CreateOrderPayload" ],
+      "return_type" : "Promise<Order>",
+      "description" : "Submits a new order request."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ {
+      "method" : "POST",
+      "path" : "/api/v1/orders",
+      "request_body" : null,
+      "response_body" : null,
+      "description" : "Creates a new order."
+    } ],
+    "imports_from" : [ "frontend/src/api/client.ts", "frontend/src/types/order.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-flow",
+    "file_role" : "SERVICE layer - Makes the HTTP call to create an order. Its createOrder(payload) function calls POST /api/v1/orders and returns the response containing the Razorpay order ID."
+  }, {
+    "file_name" : "useOrders.ts",
+    "file_path" : "frontend/src/hooks/useOrders.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "HOOK",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Custom hook for managing order state.",
+    "public_functions" : [ {
+      "name" : "useCreateOrder",
+      "parameters" : [ ],
+      "return_type" : "UseMutationResult<Order, Error, CreateOrderPayload>",
+      "description" : "A React Query mutation hook for creating an order."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/services/orderService.ts", "frontend/src/types/order.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-flow",
+    "file_role" : "HOOK layer - Provides the mutation logic for creating an order. It uses React Query and orderService to handle the API call and manage loading/success/error states for the checkout process."
+  }, {
+    "file_name" : "OrderPage.tsx",
+    "file_path" : "frontend/src/pages/OrderPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "The checkout page where customers review their cart and place an order.",
+    "public_functions" : [ {
+      "name" : "OrderPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders the cart summary and checkout form."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/hooks/useOrders.ts", "frontend/src/components/Layout.tsx", "frontend/src/context/CartContext.tsx", "frontend/src/types/order.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "order-flow",
+    "file_role" : "PAGE layer - The main checkout UI. It displays items from CartContext, collects customer details, and on submission, calls the mutation from useCreateOrder() to initiate payment."
+  }, {
+    "file_name" : "AdminOrdersPage.tsx",
+    "file_path" : "frontend/src/pages/admin/AdminOrdersPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Admin page for managing customer orders.",
+    "public_functions" : [ {
+      "name" : "AdminOrdersPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders a data table for viewing and managing orders."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/components/admin/AdminLayout.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "admin-portal",
+    "file_role" : "PAGE layer - Provides the UI for administrators to view all incoming orders and update their status (e.g., from RECEIVED to PREPARING)."
+  }, {
+    "file_name" : "HomePage.tsx",
+    "file_path" : "frontend/src/pages/HomePage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "The landing page for the Log House Restaurant website.",
+    "public_functions" : [ {
+      "name" : "HomePage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders the main homepage sections."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/components/Layout.tsx", "frontend/src/components/PromotionBanner.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "static-pages",
+    "file_role" : "PAGE layer - The main entry point for visitors. It assembles various components like the hero section, featured dishes, promotion banner, and testimonials to create a compelling landing experience."
+  }, {
+    "file_name" : "AboutPage.tsx",
+    "file_path" : "frontend/src/pages/AboutPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A static page describing the restaurant's story and values.",
+    "public_functions" : [ {
+      "name" : "AboutPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders the about us content."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/components/Layout.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "static-pages",
+    "file_role" : "PAGE layer - A content-focused page that tells the story of Log House Restaurant, its culinary philosophy, and introduces the team. It is wrapped in the main Layout."
+  }, {
+    "file_name" : "ContactPage.tsx",
+    "file_path" : "frontend/src/pages/ContactPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A page with contact details, a contact form, and a map.",
+    "public_functions" : [ {
+      "name" : "ContactPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders contact information."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/components/Layout.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "static-pages",
+    "file_role" : "PAGE layer - Provides multiple ways for customers to contact the restaurant, including address, phone number, a contact form, and an embedded Google Map for directions."
+  }, {
+    "file_name" : "promotion.ts",
+    "file_path" : "frontend/src/types/promotion.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "UTIL",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "TypeScript types for the promotion domain.",
+    "public_functions" : [ ],
+    "public_variables" : [ {
+      "name" : "Promotion",
+      "type" : "interface",
+      "description" : "Represents a promotional banner."
+    } ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-display",
+    "file_role" : "UTIL layer - Exports the TypeScript interface for a Promotion, ensuring type-safe handling of promotion data on the frontend."
+  }, {
+    "file_name" : "promotionService.ts",
+    "file_path" : "frontend/src/services/promotionService.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "SERVICE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Service for fetching promotion data.",
+    "public_functions" : [ {
+      "name" : "getActivePromotion",
+      "parameters" : [ ],
+      "return_type" : "Promise<Promotion | null>",
+      "description" : "Fetches the currently active promotion."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ {
+      "method" : "GET",
+      "path" : "/api/v1/promotions/active",
+      "request_body" : null,
+      "response_body" : null,
+      "description" : "Fetches the active promotion."
+    } ],
+    "imports_from" : [ "frontend/src/api/client.ts", "frontend/src/types/promotion.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-display",
+    "file_role" : "SERVICE layer - Makes the HTTP call to fetch promotion data. Its getActivePromotion() function calls the GET /api/v1/promotions/active endpoint."
+  }, {
+    "file_name" : "usePromotions.ts",
+    "file_path" : "frontend/src/hooks/usePromotions.ts",
+    "file_type" : "FRONTEND",
+    "layer" : "HOOK",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Custom hook for fetching promotion data.",
+    "public_functions" : [ {
+      "name" : "useActivePromotion",
+      "parameters" : [ ],
+      "return_type" : "{ data: Promotion | null, isLoading: boolean }",
+      "description" : "A React Query hook for fetching the active promotion."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/services/promotionService.ts", "frontend/src/types/promotion.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-display",
+    "file_role" : "HOOK layer - Provides reactive data fetching for the active promotion. It uses React Query and promotionService to fetch data for the PromotionBanner component."
+  }, {
+    "file_name" : "PromotionBanner.tsx",
+    "file_path" : "frontend/src/components/PromotionBanner.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "COMPONENT",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "A component to display the currently active promotion on the homepage.",
+    "public_functions" : [ {
+      "name" : "PromotionBanner",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element | null",
+      "description" : "Fetches and renders the active promotion."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/hooks/usePromotions.ts" ],
+    "depends_on" : [ ],
+    "feature_name" : "promotion-display",
+    "file_role" : "COMPONENT layer - A self-contained component that uses the useActivePromotion() hook to fetch and display the current special offer. It renders nothing if no promotion is active."
+  }, {
+    "file_name" : "AdminPromotionsPage.tsx",
+    "file_path" : "frontend/src/pages/admin/AdminPromotionsPage.tsx",
+    "file_type" : "FRONTEND",
+    "layer" : "PAGE",
+    "created_date" : "2024-07-27",
+    "updated_date" : "2024-07-27",
+    "status" : "PLANNED",
+    "description" : "Admin page for managing promotions.",
+    "public_functions" : [ {
+      "name" : "AdminPromotionsPage",
+      "parameters" : [ ],
+      "return_type" : "JSX.Element",
+      "description" : "Renders a data table for CRUD operations on promotions."
+    } ],
+    "public_variables" : [ ],
+    "api_endpoints" : [ ],
+    "api_endpoints_consumed" : [ ],
+    "imports_from" : [ "frontend/src/components/admin/AdminLayout.tsx" ],
+    "depends_on" : [ ],
+    "feature_name" : "admin-portal",
+    "file_role" : "PAGE layer - Provides the UI for administrators to create and manage promotional banners, including setting which one is currently active."
+  } ],
+  "features" : [ {
+    "feature_name" : "shared-backend-auth",
+    "feature_display_name" : "Shared Backend - Authentication",
+    "feature_type" : "SHARED",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/model/User.java", "backend/src/main/java/com/loghouserestaurant/model/Role.java", "backend/src/main/java/com/loghouserestaurant/repository/UserRepository.java", "backend/src/main/java/com/loghouserestaurant/service/UserService.java", "backend/src/main/java/com/loghouserestaurant/util/JwtUtil.java", "backend/src/main/java/com/loghouserestaurant/security/JwtAuthFilter.java", "backend/src/main/java/com/loghouserestaurant/config/SecurityConfig.java", "backend/src/main/java/com/loghouserestaurant/config/AdminInitializer.java" ],
+    "feature_instruction" : "The `shared-backend-auth` feature provides the core authentication and authorization mechanisms for the Log House Restaurant backend using Spring Security and JSON Web Tokens (JWTs). It defines user roles, the user entity, data access, user details service implementation, JWT utility functions, a JWT authentication filter, and the main security configuration. It also includes an initializer to seed an initial admin user.\n\n### File: `backend/src/main/java/com/loghouserestaurant/model/Role.java`\nThis is an enum that defines the distinct roles a user can have within the Log House Restaurant application. It is used by the `User` entity and `SecurityConfig` for authorization.\n\n**Public Variables:**\n*   `ADMIN`: Represents an administrator with full access to management endpoints.\n*   `CUSTOMER`: Represents a customer, intended for future features like order history and personalized experiences.\n\n### File: `backend/src/main/java/com/loghouserestaurant/model/User.java`\nThis class represents the `User` entity, mapping to a database table. It holds essential user information required for authentication and authorization.\n\n**Public Variables:**\n*   `id`: `UUID` - Primary key, auto-generated by the database.\n*   `email`: `String` - The user's email address, which serves as their unique login identifier. Must be unique and not null.\n*   `password`: `String` - The user's password, stored as a BCrypt hash. Must not be null.\n*   `role`: `Role` - The user's role, defined by the `Role` enum (ADMIN or CUSTOMER). Must not be null.\n\n### File: `backend/src/main/java/com/loghouserestaurant/repository/UserRepository.java`\nThis is a Spring Data JPA repository interface for the `User` entity, providing standard CRUD operations and custom query methods.\n\n**Public Functions:**\n*   `Optional<User> findByEmail(String email)`\n    *   **Description:** Retrieves a `User` entity from the database based on their email address.\n    *   **Logic:**\n        1.  Queries the database for a `User` record where the `email` field matches the provided `email` parameter.\n        2.  Returns an `Optional<User>` which will contain the `User` if found, or be empty otherwise.\n\n### File: `backend/src/main/java/com/loghouserestaurant/service/UserService.java`\nThis service implements Spring Security's `UserDetailsService` interface, responsible for loading user-specific data during the authentication process.\n\n**Dependencies:** `UserRepository` is injected.\n\n**Public Functions:**\n*   `UserDetails loadUserByUsername(String email)`\n    *   **Description:** Loads user details by email for Spring Security authentication. This method is invoked by Spring Security's authentication manager.\n    *   **Logic:**\n        1.  Calls `userRepository.findByEmail(email)` to find the user.\n        2.  If the user is not found, throws a `UsernameNotFoundException` with the message \"User not found with email: \" + `email`.\n        3.  If found, constructs and returns a `org.springframework.security.core.userdetails.User` object using the retrieved `User` entity's email, password, and a collection of `SimpleGrantedAuthority` based on the `User`'s `role`.\n    *   **Error Cases:**\n        *   `UsernameNotFoundException`: If no user is found with the given email.\n\n### File: `backend/src/main/java/com/loghouserestaurant/util/JwtUtil.java`\nThis utility class provides methods for generating, validating, and extracting information from JWTs. It uses a secret key configured via application properties (`jwt.secret`).\n\n**Public Functions:**\n*   `String generateToken(UserDetails userDetails)`\n    *   **Description:** Generates a JWT for an authenticated user.\n    *   **Logic:**\n        1.  Extracts the username (email) from `userDetails` as the JWT subject.\n        2.  Sets the token issuance time (`iat`) to the current time.\n        3.  Sets the token expiration time (`exp`) to 24 hours from the current time.\n        4.  Signs the token using the configured secret key (HMAC SHA-256).\n        5.  Returns the generated JWT string.\n\n*   `boolean validateToken(String token, UserDetails userDetails)`\n    *   **Description:** Validates a JWT against provided user details.\n    *   **Logic:**\n        1.  Extracts the email from the `token` using `extractEmail(token)`.\n        2.  Checks if the extracted email matches `userDetails.getUsername()`.\n        3.  Checks if the token is expired. A token is expired if its expiration date is before the current date.\n        4.  Returns `true` if both checks pass (email matches and token is not expired), `false` otherwise.\n\n*   `String extractEmail(String token)`\n    *   **Description:** Extracts the email (subject) from a JWT.\n    *   **Logic:**\n        1.  Parses the `token` using the configured secret key.\n        2.  Retrieves the subject claim from the token's body.\n        3.  Returns the subject string, which represents the user's email.\n\n### File: `backend/src/main/java/com/loghouserestaurant/security/JwtAuthFilter.java`\nThis is a custom Spring Security filter that intercepts incoming HTTP requests to validate JWTs present in the `Authorization` header. If a valid JWT is found, it authenticates the user and sets the security context.\n\n**Dependencies:** `JwtUtil` and `UserService` are injected.\n\n**Public Functions:**\n*   `void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)`\n    *   **Description:** Core filter logic to parse and validate the Bearer token from the request header.\n    *   **Logic:**\n        1.  Extracts the `Authorization` header from the `HttpServletRequest`.\n        2.  If the header is null, does not start with \"Bearer \", or is too short, it proceeds to the next filter in the chain without setting authentication.\n        3.  Extracts the JWT token by removing the \"Bearer \" prefix.\n        4.  Extracts the user email from the token using `jwtUtil.extractEmail(token)`.\n        5.  If an email is extracted and no authentication is currently set in the `SecurityContextHolder`:\n            a.  Loads `UserDetails` using `userService.loadUserByUsername(email)`.\n            b.  If `userDetails` is loaded and `jwtUtil.validateToken(token, userDetails)` returns `true`:\n                i.   Creates a `UsernamePasswordAuthenticationToken` with `userDetails`, null credentials, and `userDetails.getAuthorities()`.\n                ii.  Sets the authentication token's details using `new WebAuthenticationDetailsSource().buildDetails(request)`.\n                iii. Sets this authentication object in the `SecurityContextHolder`.\n        6.  Proceeds to the next filter in the chain by calling `filterChain.doFilter(request, response)`.\n\n### File: `backend/src/main/java/com/loghouserestaurant/config/SecurityConfig.java`\nThis class provides the central Spring Security configuration for the Log House Restaurant application. It defines the security filter chain, authorization rules, and integrates the custom `JwtAuthFilter`.\n\n**Dependencies:** `JwtAuthFilter` is injected.\n\n**Public Functions:**\n*   `SecurityFilterChain securityFilterChain(HttpSecurity http)`\n    *   **Description:** Configures CORS, CSRF, session management, and authorization rules for all HTTP requests.\n    *   **Logic:**\n        1.  Disables CSRF protection.\n        2.  Configures session management to be stateless (`SessionCreationPolicy.STATELESS`).\n        3.  Defines authorization rules:\n            *   `POST /api/v1/auth/login`: Permitted for all (`permitAll()`).\n            *   `GET /api/v1/menu/**`: Permitted for all (`permitAll()`).\n            *   `GET /api/v1/menu/categories`: Permitted for all (`permitAll()`).\n            *   `POST /api/v1/reservations`: Permitted for all (`permitAll()`).\n            *   `POST /api/v1/orders`: Permitted for all (`permitAll()`).\n            *   `POST /api/v1/payments/webhook`: Permitted for all (`permitAll()`).\n            *   `GET /api/v1/promotions/active`: Permitted for all (`permitAll()`).\n            *   `GET /api/v1/admin/**`: Requires `ADMIN` role (`hasRole(Role.ADMIN.name())`).\n            *   All other requests (`anyRequest()`): Must be authenticated (`authenticated()`).\n        4.  Adds `jwtAuthFilter` before `UsernamePasswordAuthenticationFilter` in the filter chain.\n        5.  Builds and returns the `SecurityFilterChain`.\n\n### File: `backend/src/main/java/com/loghouserestaurant/config/AdminInitializer.java`\nThis class is a `CommandLineRunner` that executes on application startup. Its purpose is to ensure an initial administrator user exists in the database, using credentials provided via environment variables.\n\n**Dependencies:** `UserRepository` and `PasswordEncoder` (from Spring Security) are injected.\n\n**Public Functions:**\n*   `void run(String... args)`\n    *   **Description:** Executes on application startup to ensure an admin user is present. It checks for the existence of an admin user and creates one if not found, using environment variables for credentials.\n    *   **Logic:**\n        1.  Retrieves the admin email from the environment variable `ADMIN_EMAIL`.\n        2.  Retrieves the admin password from the environment variable `ADMIN_PASSWORD`.\n        3.  If either `ADMIN_EMAIL` or `ADMIN_PASSWORD` is not set, logs a warning and exits without creating an admin user.\n        4.  Checks if a user with the `ADMIN_EMAIL` already exists in the database using `userRepository.findByEmail(adminEmail)`.\n        5.  If no user is found with that email:\n            a.  Creates a new `User` object.\n            b.  Sets the `email` to `adminEmail`.\n            c.  Sets the `password` to the BCrypt-encoded `adminPassword` using `passwordEncoder.encode(adminPassword)`.\n            d.  Sets the `role` to `Role.ADMIN`.\n            e.  Saves the new `User` to the database using `userRepository.save(adminUser)`.\n            f.  Logs a success message indicating the admin user was created.\n        6.  If a user with that email already exists, logs a message indicating that the admin user already exists and no new user was created.\n",
+    "change_required" : true
+  }, {
+    "feature_name" : "authentication-api",
+    "feature_display_name" : "Authentication API",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/controller/AuthController.java", "backend/src/main/java/com/loghouserestaurant/dto/AuthRequest.java", "backend/src/main/java/com/loghouserestaurant/dto/AuthResponse.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "shared-backend-infra",
+    "feature_display_name" : "Shared Backend - Infrastructure",
+    "feature_type" : "SHARED",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/controller/SpaController.java", "backend/src/main/java/com/loghouserestaurant/exception/GlobalExceptionHandler.java", "backend/src/main/java/com/loghouserestaurant/dto/ErrorResponse.java", "backend/src/main/java/com/loghouserestaurant/config/DataSeeder.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "menu-management-core",
+    "feature_display_name" : "Menu Management (Core)",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/model/MenuItem.java", "backend/src/main/java/com/loghouserestaurant/model/MenuItemCategory.java", "backend/src/main/java/com/loghouserestaurant/repository/MenuItemRepository.java", "backend/src/main/java/com/loghouserestaurant/repository/MenuItemCategoryRepository.java", "backend/src/main/java/com/loghouserestaurant/service/MenuService.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "menu-management-api",
+    "feature_display_name" : "Menu Management (API)",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/dto/MenuItemDto.java", "backend/src/main/java/com/loghouserestaurant/dto/MenuItemCategoryDto.java", "backend/src/main/java/com/loghouserestaurant/controller/MenuController.java", "backend/src/main/java/com/loghouserestaurant/controller/AdminMenuController.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "reservation-system-core",
+    "feature_display_name" : "Reservation System (Core)",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/model/Reservation.java", "backend/src/main/java/com/loghouserestaurant/model/ReservationStatus.java", "backend/src/main/java/com/loghouserestaurant/repository/ReservationRepository.java", "backend/src/main/java/com/loghouserestaurant/service/ReservationService.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "reservation-system-api",
+    "feature_display_name" : "Reservation System (API)",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/dto/CreateReservationRequest.java", "backend/src/main/java/com/loghouserestaurant/dto/ReservationResponse.java", "backend/src/main/java/com/loghouserestaurant/dto/UpdateReservationStatusRequest.java", "backend/src/main/java/com/loghouserestaurant/controller/ReservationController.java", "backend/src/main/java/com/loghouserestaurant/controller/AdminReservationController.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "order-management-core",
+    "feature_display_name" : "Order Management (Core)",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/model/Order.java", "backend/src/main/java/com/loghouserestaurant/model/OrderItem.java", "backend/src/main/java/com/loghouserestaurant/model/OrderStatus.java", "backend/src/main/java/com/loghouserestaurant/repository/OrderRepository.java", "backend/src/main/java/com/loghouserestaurant/repository/OrderItemRepository.java", "backend/src/main/java/com/loghouserestaurant/service/OrderService.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "order-management-api",
+    "feature_display_name" : "Order Management (API)",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/dto/CreateOrderRequest.java", "backend/src/main/java/com/loghouserestaurant/dto/OrderItemRequest.java", "backend/src/main/java/com/loghouserestaurant/dto/OrderResponse.java", "backend/src/main/java/com/loghouserestaurant/dto/OrderItemResponse.java", "backend/src/main/java/com/loghouserestaurant/dto/UpdateOrderStatusRequest.java", "backend/src/main/java/com/loghouserestaurant/controller/OrderController.java", "backend/src/main/java/com/loghouserestaurant/controller/AdminOrderController.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "payment-processing",
+    "feature_display_name" : "Payment Processing",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/service/PaymentService.java", "backend/src/main/java/com/loghouserestaurant/controller/PaymentController.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "promotion-management-core",
+    "feature_display_name" : "Promotion Management (Core)",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/model/Promotion.java", "backend/src/main/java/com/loghouserestaurant/repository/PromotionRepository.java", "backend/src/main/java/com/loghouserestaurant/service/PromotionService.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "promotion-management-api",
+    "feature_display_name" : "Promotion Management (API)",
+    "feature_type" : "BACKEND",
+    "file_paths" : [ "backend/src/main/java/com/loghouserestaurant/dto/PromotionDto.java", "backend/src/main/java/com/loghouserestaurant/controller/PromotionController.java", "backend/src/main/java/com/loghouserestaurant/controller/AdminPromotionController.java" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "shared-frontend-infra",
+    "feature_display_name" : "Shared Frontend - Infrastructure",
+    "feature_type" : "SHARED",
+    "file_paths" : [ "frontend/src/api/client.ts", "frontend/src/App.tsx", "frontend/src/components/Layout.tsx", "frontend/src/components/Header.tsx", "frontend/src/components/Footer.tsx" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "auth-ui",
+    "feature_display_name" : "Authentication UI",
+    "feature_type" : "FRONTEND",
+    "file_paths" : [ "frontend/src/context/AuthContext.tsx", "frontend/src/hooks/useAuth.ts", "frontend/src/services/authService.ts", "frontend/src/components/ProtectedRoute.tsx", "frontend/src/pages/LoginPage.tsx" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "admin-portal",
+    "feature_display_name" : "Admin Portal",
+    "feature_type" : "FRONTEND",
+    "file_paths" : [ "frontend/src/components/admin/AdminLayout.tsx", "frontend/src/pages/admin/AdminDashboardPage.tsx", "frontend/src/pages/admin/AdminMenuPage.tsx", "frontend/src/pages/admin/AdminReservationsPage.tsx", "frontend/src/pages/admin/AdminOrdersPage.tsx", "frontend/src/pages/admin/AdminPromotionsPage.tsx" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "menu-display",
+    "feature_display_name" : "Menu Display",
+    "feature_type" : "FRONTEND",
+    "file_paths" : [ "frontend/src/types/menu.ts", "frontend/src/services/menuService.ts", "frontend/src/hooks/useMenu.ts", "frontend/src/pages/MenuPage.tsx" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "reservation-booking",
+    "feature_display_name" : "Reservation Booking",
+    "feature_type" : "FRONTEND",
+    "file_paths" : [ "frontend/src/types/reservation.ts", "frontend/src/services/reservationService.ts", "frontend/src/hooks/useReservations.ts", "frontend/src/pages/ReservationPage.tsx" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "order-flow",
+    "feature_display_name" : "Order Flow & Cart",
+    "feature_type" : "FRONTEND",
+    "file_paths" : [ "frontend/src/types/order.ts", "frontend/src/context/CartContext.tsx", "frontend/src/services/orderService.ts", "frontend/src/hooks/useOrders.ts", "frontend/src/pages/OrderPage.tsx" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "static-pages",
+    "feature_display_name" : "Static Pages",
+    "feature_type" : "FRONTEND",
+    "file_paths" : [ "frontend/src/pages/HomePage.tsx", "frontend/src/pages/AboutPage.tsx", "frontend/src/pages/ContactPage.tsx" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  }, {
+    "feature_name" : "promotion-display",
+    "feature_display_name" : "Promotion Display",
+    "feature_type" : "FRONTEND",
+    "file_paths" : [ "frontend/src/types/promotion.ts", "frontend/src/services/promotionService.ts", "frontend/src/hooks/usePromotions.ts", "frontend/src/components/PromotionBanner.tsx" ],
+    "feature_instruction" : null,
+    "change_required" : true
+  } ]
+}
