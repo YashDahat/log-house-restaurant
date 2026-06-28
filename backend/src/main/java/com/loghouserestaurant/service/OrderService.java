@@ -12,10 +12,6 @@ import com.loghouserestaurant.dto.OrderResponse;
 import com.loghouserestaurant.dto.OrderItemRequest;
 import com.loghouserestaurant.dto.OrderItemResponse;
 import com.loghouserestaurant.dto.UpdateOrderStatusRequest;
-import com.loghouserestaurant.exception.InvalidOrderStatusTransitionException;
-import com.loghouserestaurant.exception.PaymentInitiationException;
-import com.loghouserestaurant.exception.PaymentVerificationException;
-import com.loghouserestaurant.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +20,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import com.loghouserestaurant.service.PaymentService;
+import com.loghouserestaurant.controller.PaymentController;
 
 @Service
 public class OrderService {
@@ -31,7 +29,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final MenuItemRepository menuItemRepository;
-    private final PaymentService paymentService; // Assuming PaymentService class exists and is injectable
+    private final PaymentService paymentService;
 
     @Autowired
     public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
@@ -72,8 +70,6 @@ public class OrderService {
         try {
             razorpayOrderId = paymentService.createRazorpayOrder(totalAmount);
         } catch (Exception e) {
-            // Catching generic Exception as PaymentInitiationException is not defined or imported.
-            // Throwing specific exception name as per instruction.
             throw new PaymentInitiationException("Failed to initiate Razorpay order: " + e.getMessage());
         }
         order.setRazorpayOrderId(razorpayOrderId);
@@ -112,8 +108,7 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + id));
 
-        // Validate status transition as per instruction:
-        // "an order cannot transition from DELIVERED back to PENDING_PAYMENT."
+        // Validate status transition
         if (order.getStatus() == OrderStatus.DELIVERED && request.getStatus() == OrderStatus.PENDING_PAYMENT) {
             throw new InvalidOrderStatusTransitionException("Invalid status transition: Cannot change a DELIVERED order back to PENDING_PAYMENT.");
         }

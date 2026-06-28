@@ -2,7 +2,6 @@ package com.loghouserestaurant.service;
 
 import com.loghouserestaurant.repository.PromotionRepository;
 import com.loghouserestaurant.dto.PromotionDto;
-import com.loghouserestaurant.exception.ResourceNotFoundException;
 import com.loghouserestaurant.model.Promotion;
 import org.springframework.stereotype.Service;
 
