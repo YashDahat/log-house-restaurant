@@ -12,10 +12,6 @@ import com.loghouserestaurant.dto.OrderResponse;
 import com.loghouserestaurant.dto.OrderItemRequest;
 import com.loghouserestaurant.dto.OrderItemResponse;
 import com.loghouserestaurant.dto.UpdateOrderStatusRequest;
-import com.loghouserestaurant.exception.PaymentInitiationException;
-import com.loghouserestaurant.exception.PaymentVerificationException;
-import com.loghouserestaurant.exception.InvalidOrderStatusTransitionException;
-import com.loghouserestaurant.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import com.loghouserestaurant.service.PaymentService;
 
 @Service
 public class OrderService {

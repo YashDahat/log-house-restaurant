@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.loghouserestaurant.exception.PaymentGatewayException; // Added as per Rule 7
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -29,11 +28,11 @@ public class PaymentService {
         try {
             RazorpayClient razorpayClient = new RazorpayClient(razorpayKeyId, razorpayKeySecret);
 
-            JSONObject orderRequest = new JSONObject(); // Changed from Map to JSONObject
-            orderRequest.put("amount", amount.multiply(new BigDecimal("100")).intValue()); // amount in the smallest currency unit
+            JSONObject orderRequest = new JSONObject();
+            orderRequest.put("amount", amount.multiply(new BigDecimal("100")).intValue());
             orderRequest.put("currency", "INR");
             orderRequest.put("receipt", UUID.randomUUID().toString());
-            orderRequest.put("payment_capture", "1"); // auto-capture
+            orderRequest.put("payment_capture", "1");
 
             Order order = razorpayClient.orders.create(orderRequest);
             return order.get("id");
@@ -62,7 +61,6 @@ public class PaymentService {
             attributes.put("razorpay_payment_link_status", "");
             attributes.put("razorpay_payment_id", "");
             attributes.put("razorpay_signature", signature);
-            // Webhook signature verification uses the raw payload + webhook secret
             return Utils.verifyWebhookSignature(payload, signature, razorpayWebhookSecret);
         } catch (RazorpayException e) {
             return false;
