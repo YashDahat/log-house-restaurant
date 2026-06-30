@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import Layout from '@/components/Layout';
 
-const LoginPage = (): JSX.Element => {
+const LoginPage: React.FC = () => {
   const { login, token, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -20,6 +20,7 @@ const LoginPage = (): JSX.Element => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
     try {
       await login(email, password);
       // Redirection handled by useEffect if login is successful and token is set
@@ -31,12 +32,14 @@ const LoginPage = (): JSX.Element => {
   return (
     <Layout>
       <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto flex justify-center items-center">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 w-full max-w-md">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg border border-gray-100 p-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Welcome, Administrator</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-2">
+                  Email
+                </label>
                 <input
                   type="email"
                   id="email"
@@ -47,7 +50,9 @@ const LoginPage = (): JSX.Element => {
                 />
               </div>
               <div className="mb-6">
-                <label htmlFor="password" className="block text-gray-700 text-sm font-medium mb-2">Password</label>
+                <label htmlFor="password" className="block text-gray-700 text-sm font-medium mb-2">
+                  Password
+                </label>
                 <input
                   type="password"
                   id="password"
@@ -57,9 +62,7 @@ const LoginPage = (): JSX.Element => {
                   required
                 />
               </div>
-              {error && (
-                <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
-              )}
+              {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
               <button
                 type="submit"
                 className="bg-[#F9A825] hover:bg-[#E67E22] text-white font-semibold rounded-md px-6 py-3 transition-all duration-200 w-full"
