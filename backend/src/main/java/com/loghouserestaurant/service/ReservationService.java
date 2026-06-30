@@ -4,7 +4,6 @@ import com.loghouserestaurant.repository.ReservationRepository;
 import com.loghouserestaurant.dto.CreateReservationRequest;
 import com.loghouserestaurant.dto.ReservationResponse;
 import com.loghouserestaurant.dto.UpdateReservationStatusRequest;
-import com.loghouserestaurant.exception.ResourceNotFoundException; // Added import for ResourceNotFoundException
 import com.loghouserestaurant.model.Reservation;
 import com.loghouserestaurant.model.ReservationStatus;
 import org.springframework.stereotype.Service;
@@ -13,10 +12,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-// Assuming ResourceNotFoundException is defined elsewhere in the project.
-// If not, this will result in a compilation error.
-// Example: class ResourceNotFoundException extends RuntimeException { public ResourceNotFoundException(String message) { super(message); } }
 
 @Service
 public class ReservationService {
@@ -34,7 +29,7 @@ public class ReservationService {
         }
 
         Reservation reservation = new Reservation();
-        reservation.setId(UUID.randomUUID()); // Generate UUID as explicitly instructed
+        reservation.setId(UUID.randomUUID());
         reservation.setCustomerName(request.getCustomerName());
         reservation.setCustomerPhone(request.getCustomerPhone());
         reservation.setCustomerEmail(request.getCustomerEmail());
