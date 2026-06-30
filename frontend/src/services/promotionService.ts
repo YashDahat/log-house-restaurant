@@ -6,7 +6,7 @@ export const getActivePromotion = async (): Promise<Promotion | null> => {
     const response = await apiClient.get<Promotion>('/promotions/active');
     return response.data;
   } catch (error) {
-    // console.error('Error fetching active promotion:', error); // No unsolicited comments
+    // If no active promotion is found (e.g., 404) or any other API error, return null
     return null;
   }
 };
