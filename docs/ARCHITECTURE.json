@@ -2015,8 +2015,8 @@
     "file_type" : "FRONTEND",
     "layer" : "SERVICE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-28",
-    "status" : "GENERATION_FAILED",
+    "updated_date" : "2026-06-30",
+    "status" : "GENERATED",
     "description" : "Service for fetching menu data from the API.",
     "public_functions" : [ {
       "name" : "getMenuItems",
@@ -2150,8 +2150,8 @@
     "file_type" : "FRONTEND",
     "layer" : "SERVICE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-28",
-    "status" : "GENERATION_FAILED",
+    "updated_date" : "2026-06-30",
+    "status" : "GENERATED",
     "description" : "Service for reservation API calls.",
     "public_functions" : [ {
       "name" : "createReservation",
@@ -2476,7 +2476,7 @@
     "file_type" : "FRONTEND",
     "layer" : "SERVICE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-28",
+    "updated_date" : "2026-06-30",
     "status" : "GENERATED",
     "description" : "Service for fetching promotion data.",
     "public_functions" : [ {
