@@ -1,9 +1,7 @@
 package com.loghouserestaurant.dto;
 
-import jakarta.validation.constraints.*;
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.UUID;
-import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -14,7 +12,8 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemResponse {
+    private UUID menuItemId;
     private String menuItemName;
     private Integer quantity;
-    private java.math.BigDecimal price;
+    private BigDecimal price;
 }

@@ -12,6 +12,10 @@ import com.loghouserestaurant.dto.OrderResponse;
 import com.loghouserestaurant.dto.OrderItemRequest;
 import com.loghouserestaurant.dto.OrderItemResponse;
 import com.loghouserestaurant.dto.UpdateOrderStatusRequest;
+import com.loghouserestaurant.exception.PaymentInitiationException;
+import com.loghouserestaurant.exception.PaymentVerificationException;
+import com.loghouserestaurant.exception.InvalidOrderStatusTransitionException;
+import com.loghouserestaurant.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,8 +24,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import com.loghouserestaurant.service.PaymentService;
-import com.loghouserestaurant.controller.PaymentController;
 
 @Service
 public class OrderService {
@@ -52,8 +54,8 @@ public class OrderService {
             OrderItem orderItem = new OrderItem();
             orderItem.setMenuItem(menuItem);
             orderItem.setQuantity(itemRequest.getQuantity());
-            orderItem.setPrice(menuItem.getPrice()); // Use current menu item price
-            orderItem.setOrder(order); // Link to the parent order
+            orderItem.setPrice(menuItem.getPrice());
+            orderItem.setOrder(order);
 
             orderItems.add(orderItem);
             totalAmount = totalAmount.add(menuItem.getPrice().multiply(BigDecimal.valueOf(itemRequest.getQuantity())));
@@ -76,7 +78,6 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        // Map to OrderResponse
         return mapToOrderResponse(savedOrder);
     }
 
@@ -108,7 +109,6 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + id));
 
-        // Validate status transition
         if (order.getStatus() == OrderStatus.DELIVERED && request.getStatus() == OrderStatus.PENDING_PAYMENT) {
             throw new InvalidOrderStatusTransitionException("Invalid status transition: Cannot change a DELIVERED order back to PENDING_PAYMENT.");
         }
@@ -119,7 +119,6 @@ public class OrderService {
         return mapToOrderResponse(updatedOrder);
     }
 
-    // Called by PaymentController webhook handler after Razorpay payment confirmation
     public void updateOrderStatus(String razorpayOrderId, String razorpayPaymentId, String status) {
         Order order = orderRepository.findByRazorpayOrderId(razorpayOrderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with Razorpay Order ID: " + razorpayOrderId));
@@ -142,7 +141,7 @@ public class OrderService {
                 .orderId(order.getId())
                 .razorpayOrderId(order.getRazorpayOrderId())
                 .totalAmount(order.getTotalAmount())
-                .status(order.getStatus().name()) // Convert enum to String name
+                .status(order.getStatus().name())
                 .items(itemResponses)
                 .build();
     }

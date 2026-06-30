@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import clsx from 'clsx'; // Not explicitly used but good practice to include if needed for complex class merging
+// Not explicitly used but good practice to include if needed for complex class merging
 import axios from 'axios'; // Assuming axios is configured and available
 
 // Inferred PromotionDto structure based on requirements

@@ -7,12 +7,18 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
-import com.loghouserestaurant.model.ReservationStatus;
 
 @Entity
 @Table(name = "reservations")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Reservation {
 
     @Id
