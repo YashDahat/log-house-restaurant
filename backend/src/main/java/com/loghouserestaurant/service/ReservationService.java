@@ -6,7 +6,6 @@ import com.loghouserestaurant.dto.ReservationResponse;
 import com.loghouserestaurant.dto.UpdateReservationStatusRequest;
 import com.loghouserestaurant.model.Reservation;
 import com.loghouserestaurant.model.ReservationStatus;
-import com.loghouserestaurant.exception.ResourceNotFoundException; // Added as per rules for application-level exceptions
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
