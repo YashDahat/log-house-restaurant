@@ -24,13 +24,6 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Note: The following code assumes `com.loghouserestaurant.model.MenuItemCategory` is an entity class
-        // with a public default constructor, a public `setName(String name)` method, and `getId()`/`setId()` methods.
-        // This contradicts the provided `MenuItemCategory.java` which defines an enum.
-        // This implementation is based on fulfilling the explicit logic described for `DataSeeder` in the feature instruction,
-        // which requires `MenuItemCategory` to be a savable entity with a name.
-        // This will likely result in a compilation error if compiled against the provided enum definition.
-
         if (menuItemCategoryRepository.count() == 0) {
             // Seed Categories
             MenuItemCategory startersCategory = new MenuItemCategory();
