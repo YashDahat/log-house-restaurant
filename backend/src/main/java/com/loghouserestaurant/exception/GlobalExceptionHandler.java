@@ -10,10 +10,6 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-// Assuming ResourceNotFoundException is defined in the same package for compilation purposes,
-// as it's mentioned as a custom exception but not provided in dependency files or explicit imports.
-// This is a necessary assumption to satisfy both "implement as specified" and "compile as-is" rules.
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
