@@ -6,7 +6,7 @@ interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -16,18 +16,18 @@ const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
     }
   }, [isAuthenticated, navigate]);
 
-  if (!isAuthenticated) {
-    return null; // Or a loading spinner, but null is fine for immediate redirect
-  }
-
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  if (!isAuthenticated) {
+    return null; // Or a loading spinner
+  }
+
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar Navigation */}
+      {/* Sidebar */}
       <div className="w-64 bg-[#4A2C2A] text-white flex flex-col">
         <h2 className="text-2xl font-bold p-4 border-b border-[#5A3E36]">
           Log House Restaurant Admin
@@ -38,8 +38,8 @@ const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
               <NavLink
                 to="/admin/dashboard"
                 className={({ isActive }) =>
-                  `block py-2 px-4 hover:bg-[#5A3E36] transition-all duration-200 ${
-                    isActive ? 'bg-[#5A3E36] font-semibold' : ''
+                  `py-2 px-4 block transition-all duration-200 ${
+                    isActive ? 'bg-[#5A3E36]' : 'hover:bg-[#5A3E36]'
                   }`
                 }
               >
@@ -50,8 +50,8 @@ const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
               <NavLink
                 to="/admin/menu"
                 className={({ isActive }) =>
-                  `block py-2 px-4 hover:bg-[#5A3E36] transition-all duration-200 ${
-                    isActive ? 'bg-[#5A3E36] font-semibold' : ''
+                  `py-2 px-4 block transition-all duration-200 ${
+                    isActive ? 'bg-[#5A3E36]' : 'hover:bg-[#5A3E36]'
                   }`
                 }
               >
@@ -62,8 +62,8 @@ const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
               <NavLink
                 to="/admin/reservations"
                 className={({ isActive }) =>
-                  `block py-2 px-4 hover:bg-[#5A3E36] transition-all duration-200 ${
-                    isActive ? 'bg-[#5A3E36] font-semibold' : ''
+                  `py-2 px-4 block transition-all duration-200 ${
+                    isActive ? 'bg-[#5A3E36]' : 'hover:bg-[#5A3E36]'
                   }`
                 }
               >
@@ -74,8 +74,8 @@ const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
               <NavLink
                 to="/admin/orders"
                 className={({ isActive }) =>
-                  `block py-2 px-4 hover:bg-[#5A3E36] transition-all duration-200 ${
-                    isActive ? 'bg-[#5A3E36] font-semibold' : ''
+                  `py-2 px-4 block transition-all duration-200 ${
+                    isActive ? 'bg-[#5A3E36]' : 'hover:bg-[#5A3E36]'
                   }`
                 }
               >
@@ -86,8 +86,8 @@ const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
               <NavLink
                 to="/admin/promotions"
                 className={({ isActive }) =>
-                  `block py-2 px-4 hover:bg-[#5A3E36] transition-all duration-200 ${
-                    isActive ? 'bg-[#5A3E36] font-semibold' : ''
+                  `py-2 px-4 block transition-all duration-200 ${
+                    isActive ? 'bg-[#5A3E36]' : 'hover:bg-[#5A3E36]'
                   }`
                 }
               >
@@ -99,7 +99,7 @@ const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
         <div className="p-4 border-t border-[#5A3E36]">
           <button
             onClick={handleLogout}
-            className="w-full text-left py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-md transition-all duration-200"
+            className="w-full text-left py-2 px-4 block transition-all duration-200 hover:bg-[#5A3E36]"
           >
             Logout
           </button>

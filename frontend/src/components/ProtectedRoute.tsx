@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 
@@ -11,16 +11,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const navigate = useNavigate();
 
   if (isLoading) {
-    return <div>Loading...</div>; // Or a more sophisticated spinner/skeleton
+    return <div>Loading...</div>;
   }
 
   if (!token) {
-    // User is not authenticated, redirect to login page
-    navigate('/login', { replace: true });
-    return null; // Do not render children while redirecting
+    useEffect(() => {
+      navigate('/login', { replace: true });
+    }, [navigate]);
+    return null;
   }
 
-  // User is authenticated, render the children
   return children;
 };
 

@@ -1,14 +1,14 @@
 import { useActivePromotion } from '@/hooks/usePromotions';
 
-export const PromotionBanner = (): JSX.Element | null => {
+export default function PromotionBanner(): JSX.Element | null {
   const { data: promotion, isLoading } = useActivePromotion();
 
   if (isLoading) {
-    return null; // Render nothing while loading
+    return null;
   }
 
   if (!promotion) {
-    return null; // Render nothing if no active promotion is found
+    return null;
   }
 
   return (
@@ -33,4 +33,4 @@ export const PromotionBanner = (): JSX.Element | null => {
       </div>
     </section>
   );
-};
+}
