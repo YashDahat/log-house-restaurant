@@ -6,6 +6,7 @@ import com.loghouserestaurant.dto.ReservationResponse;
 import com.loghouserestaurant.dto.UpdateReservationStatusRequest;
 import com.loghouserestaurant.model.Reservation;
 import com.loghouserestaurant.model.ReservationStatus;
+import com.loghouserestaurant.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
@@ -39,9 +40,6 @@ public class ReservationService {
         reservation.setStatus(ReservationStatus.PENDING);
 
         Reservation savedReservation = reservationRepository.save(reservation);
-
-        // Placeholder for email functionality:
-        // sendConfirmationEmail(request.getCustomerEmail(), savedReservation);
 
         return mapToReservationResponse(savedReservation);
     }

@@ -1,4 +1,4 @@
-interface CartItem {
+export interface CartItem {
   id: string;
   name: string;
   price: number;
@@ -6,7 +6,7 @@ interface CartItem {
   imageUrl: string;
 }
 
-interface Order {
+export interface Order {
   id: string;
   customerName: string;
   customerEmail: string;
@@ -19,7 +19,7 @@ interface Order {
   createdAt: string;
 }
 
-type CreateOrderPayload = {
+export type CreateOrderPayload = {
   customerName: string;
   customerEmail: string;
   customerPhone: string;

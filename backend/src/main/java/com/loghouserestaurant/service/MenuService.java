@@ -6,6 +6,7 @@ import com.loghouserestaurant.dto.MenuItemDto;
 import com.loghouserestaurant.dto.MenuItemCategoryDto;
 import com.loghouserestaurant.model.MenuItem;
 import com.loghouserestaurant.model.MenuItemCategory;
+import com.loghouserestaurant.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.validation.ValidationException;
@@ -28,14 +29,11 @@ public class MenuService {
     }
 
     public List<MenuItemDto> getAllAvailableMenuItems(Optional<String> category) {
-        // The MenuItemRepository context provided does not define findByCategoryNameAndIsAvailableTrue
-        // or findAllByIsAvailableTrue. To make this file compile with the given repository contract,
-        // we fetch all items and filter them in memory.
         List<MenuItem> menuItems = menuItemRepository.findAll();
 
         List<MenuItem> filteredItems = menuItems.stream()
-                .filter(MenuItem::isAvailable) // Filter for available items
-                .filter(item -> category.isEmpty() || item.getCategory().name().equalsIgnoreCase(category.get())) // Filter by category name if present
+                .filter(MenuItem::isAvailable)
+                .filter(item -> category.isEmpty() || item.getCategory().getName().equalsIgnoreCase(category.get()))
                 .collect(Collectors.toList());
 
         return filteredItems.stream()
@@ -61,13 +59,8 @@ public class MenuService {
             throw new ValidationException("Menu item category name cannot be null or empty.");
         }
 
-        // Assuming MenuItemCategory is a JPA entity with a getName() method,
-        // as implied by MenuItemCategoryRepository extending JpaRepository<MenuItemCategory, UUID>
-        // and MenuItemCategoryDto having 'id' and 'name' fields.
-        // However, MenuItemCategory is defined as an enum in the provided context.
-        // We adapt by using the enum's name() method for comparison.
         MenuItemCategory category = menuItemCategoryRepository.findAll().stream()
-                .filter(c -> c.name().equalsIgnoreCase(menuItemDto.getCategoryName()))
+                .filter(c -> c.getName().equalsIgnoreCase(menuItemDto.getCategoryName()))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Menu category not found: " + menuItemDto.getCategoryName()));
 
@@ -92,11 +85,8 @@ public class MenuService {
             throw new ValidationException("Menu item category name cannot be null or empty.");
         }
 
-        // Assuming MenuItemCategory is a JPA entity with a getName() method.
-        // However, MenuItemCategory is defined as an enum in the provided context.
-        // We adapt by using the enum's name() method for comparison.
         MenuItemCategory category = menuItemCategoryRepository.findAll().stream()
-                .filter(c -> c.name().equalsIgnoreCase(menuItemDto.getCategoryName()))
+                .filter(c -> c.getName().equalsIgnoreCase(menuItemDto.getCategoryName()))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Menu category not found: " + menuItemDto.getCategoryName()));
 
@@ -120,8 +110,6 @@ public class MenuService {
     }
 
     private MenuItemDto convertToDto(MenuItem menuItem) {
-        // MenuItemCategory is an enum, so it does not have getId() or getName() methods.
-        // We generate a UUID from the enum's name for categoryId and use name() for categoryName.
         return MenuItemDto.builder()
                 .id(menuItem.getId())
                 .name(menuItem.getName())
@@ -130,8 +118,8 @@ public class MenuService {
                 .imageUrl(menuItem.getImageUrl())
                 .isVeg(menuItem.isVeg())
                 .isAvailable(menuItem.isAvailable())
-                .categoryId(UUID.nameUUIDFromBytes(menuItem.getCategory().name().getBytes()))
-                .categoryName(menuItem.getCategory().name())
+                .categoryId(menuItem.getCategory().getId())
+                .categoryName(menuItem.getCategory().getName())
                 .build();
     }
 
@@ -149,17 +137,9 @@ public class MenuService {
     }
 
     private MenuItemCategoryDto convertToDto(MenuItemCategory category) {
-        // MenuItemCategory is an enum, so it does not have getId() or getName() methods.
-        // We generate a UUID from the enum's name for id and use name() for name.
         return MenuItemCategoryDto.builder()
-                .id(UUID.nameUUIDFromBytes(category.name().getBytes()))
-                .name(category.name())
+                .id(category.getId())
+                .name(category.getName())
                 .build();
-    }
-
-    public static class ResourceNotFoundException extends RuntimeException {
-        public ResourceNotFoundException(String message) {
-            super(message);
-        }
     }
 }

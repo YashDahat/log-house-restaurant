@@ -1,4 +1,4 @@
-interface MenuItem {
+export interface MenuItem {
   id: string;
   name: string;
   description: string;
@@ -8,7 +8,7 @@ interface MenuItem {
   isAvailable: boolean;
 }
 
-interface MenuItemCategory {
+export interface MenuItemCategory {
   id: string;
   name: string;
 }

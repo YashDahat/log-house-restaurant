@@ -3,6 +3,7 @@ package com.loghouserestaurant.service;
 import com.loghouserestaurant.repository.PromotionRepository;
 import com.loghouserestaurant.dto.PromotionDto;
 import com.loghouserestaurant.model.Promotion;
+import com.loghouserestaurant.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class PromotionService {
 
     public PromotionDto createPromotion(PromotionDto promotionDto) {
         if (promotionDto.getIsActive() != null && promotionDto.getIsActive()) {
-            deactivateAllOtherPromotions(null); // Deactivate all existing active promotions
+            deactivateAllOtherPromotions(null);
         }
 
         Promotion promotion = new Promotion(
@@ -50,9 +51,9 @@ public class PromotionService {
 
         existingPromotion.setTitle(promotionDto.getTitle());
         existingPromotion.setDescription(promotionDto.getDescription());
-        
+
         if (promotionDto.getIsActive() != null && promotionDto.getIsActive()) {
-            deactivateAllOtherPromotions(id); // Deactivate all active promotions except the current one
+            deactivateAllOtherPromotions(id);
         }
         existingPromotion.setActive(promotionDto.getIsActive() != null ? promotionDto.getIsActive() : false);
 
