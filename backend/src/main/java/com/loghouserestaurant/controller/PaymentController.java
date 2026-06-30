@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import com.loghouserestaurant.model.Order;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -62,7 +63,7 @@ public class PaymentController {
                 if (paymentService.verifyWebhookSignature(payload, signature)) {
                     logger.info("Razorpay webhook signature verified successfully.");
                     // Update order status or perform other actions
-                    orderService.updateOrderStatus(razorpayOrderId, razorpayPaymentId, "PAID"); // Assuming a method like this exists
+                    orderService.updateOrderStatus(razorpayOrderId, razorpayPaymentId, "RECEIVED"); // Assuming a method like this exists
                     return new ResponseEntity<>(HttpStatus.OK);
                 } else {
                     logger.warn("Razorpay webhook signature verification failed.");
