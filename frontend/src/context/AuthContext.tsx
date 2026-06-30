@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { login as authServiceLogin } from '../services/authService';
 
 interface AuthContextType {
@@ -11,23 +11,28 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
 const decodeJwt = (token: string) => {
   try {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+    );
     return JSON.parse(jsonPayload);
-  } catch (e) {
-    console.error("Failed to decode JWT", e);
+  } catch (error) {
+    console.error('Failed to decode JWT token:', error);
     return null;
   }
 };
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
 export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [token, setToken] = useState<string | null>(null);
@@ -39,7 +44,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     if (storedToken) {
       setToken(storedToken);
       const decoded = decodeJwt(storedToken);
-      if (decoded && decoded.email && decoded.role) {
+      if (decoded && typeof decoded.email === 'string' && typeof decoded.role === 'string') {
         setUser({ email: decoded.email, role: decoded.role });
       } else {
         localStorage.removeItem('token');
@@ -56,15 +61,15 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
       const response = await authServiceLogin({ email, password });
       localStorage.setItem('token', response.token);
       setToken(response.token);
+
       const decoded = decodeJwt(response.token);
-      if (decoded && decoded.email && decoded.role) {
+      if (decoded && typeof decoded.email === 'string' && typeof decoded.role === 'string') {
         setUser({ email: decoded.email, role: decoded.role });
       } else {
-        // Should not happen with a valid token from authServiceLogin
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
-        throw new Error("Failed to decode user info from token.");
+        throw new Error('Received invalid token from server.');
       }
     } catch (error) {
       localStorage.removeItem('token');
@@ -82,16 +87,13 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     setUser(null);
   };
 
-  const contextValue = useMemo(
-    () => ({
-      user,
-      token,
-      login,
-      logout,
-      isLoading,
-    }),
-    [user, token, isLoading]
-  );
+  const contextValue: AuthContextType = {
+    user,
+    token,
+    login,
+    logout,
+    isLoading,
+  };
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
