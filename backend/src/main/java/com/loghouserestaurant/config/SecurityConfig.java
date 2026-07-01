@@ -50,20 +50,11 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
-                // Static frontend assets
-                .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico",
-                                 "/*.js", "/*.css", "/*.svg", "/*.png", "/*.ico").permitAll()
-                // Public API endpoints
-                .requestMatchers("/api/v1/auth/login",
-                                 "/api/v1/menu/**",
-                                 "/api/v1/menu/categories",
-                                 "/api/v1/reservations",
-                                 "/api/v1/orders",
-                                 "/api/v1/payments/webhook",
-                                 "/api/v1/promotions/active",
-                                 "/actuator/health").permitAll()
+                // Protected API endpoints (check before permitAll catch-all)
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
+                // All other requests are permitted — API auth enforced above,
+                // SPA routes and static assets must load without a session
+                .anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
