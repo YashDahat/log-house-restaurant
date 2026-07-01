@@ -1,21 +1,29 @@
-import { useQuery } from '@tanstack/react-query';
-import { getMenuItems, getMenuCategories } from '../services/menuService';
+import { useQuery } from 'react-query';
 import { MenuItem, MenuItemCategory } from '../types/menu';
+import { getMenuItems, getMenuCategories } from '../services/menuService';
 
 export const useMenu = (category?: string) => {
-  const { data, isLoading, error } = useQuery<MenuItem[], Error>({
-    queryKey: ['menuItems', category],
-    queryFn: () => getMenuItems(category),
-  });
+  const { data, isLoading, error } = useQuery<MenuItem[], Error>(
+    ['menuItems', category],
+    () => getMenuItems(category)
+  );
 
-  return { data: data || [], isLoading, error };
+  return {
+    data: data || [],
+    isLoading,
+    error,
+  };
 };
 
 export const useMenuCategories = () => {
-  const { data, isLoading, error } = useQuery<MenuItemCategory[], Error>({
-    queryKey: ['menuCategories'],
-    queryFn: getMenuCategories,
-  });
+  const { data, isLoading, error } = useQuery<MenuItemCategory[], Error>(
+    ['menuCategories'],
+    getMenuCategories
+  );
 
-  return { data: data || [], isLoading, error };
+  return {
+    data: data || [],
+    isLoading,
+    error,
+  };
 };

@@ -1,82 +1,66 @@
-import { useMutation, UseMutationResult } from 'react-query';
+import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { createOrder } from '../services/orderService';
-import { useCart } from '../context/CartContext';
 import { Order, CreateOrderPayload } from '../types/order';
-
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
-
-const loadRazorpayScript = () => {
-  return new Promise<void>((resolve) => {
-    if (document.getElementById('razorpay-checkout-script')) {
-      resolve();
-      return;
-    }
-    const script = document.createElement('script');
-    script.id = 'razorpay-checkout-script';
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => {
-      console.error('Failed to load Razorpay script');
-      resolve();
-    };
-    document.head.appendChild(script);
-  });
-};
+import { useCart } from '../context/CartContext';
 
 export function useCreateOrder(): UseMutationResult<Order, Error, CreateOrderPayload> {
   const { clearCart } = useCart();
   const navigate = useNavigate();
 
-  return useMutation<Order, Error, CreateOrderPayload>(
-    createOrder,
-    {
-      onSuccess: async (data: Order, variables: CreateOrderPayload) => {
-        await loadRazorpayScript();
+  return useMutation<Order, Error, CreateOrderPayload>({
+    mutationFn: createOrder,
+    onSuccess: async (data: Order, variables: CreateOrderPayload) => {
+      // Dynamically load Razorpay script if not already available
+      if (!window.Razorpay) {
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        document.head.appendChild(script);
 
-        if (window.Razorpay) {
-          const options = {
-            key: process.env.RAZORPAY_KEY_ID,
-            amount: data.totalAmount * 100, // amount in paisa
-            currency: 'INR',
-            name: 'Log House Restaurant',
-            description: 'Order Payment',
-            order_id: data.razorpayOrderId,
-            handler: function (response: any) {
-              console.log('Razorpay Payment ID:', response.razorpay_payment_id);
-              console.log('Razorpay Order ID:', response.razorpay_order_id);
-              console.log('Razorpay Signature:', response.razorpay_signature);
-            },
-            prefill: {
-              name: variables.customerName,
-              email: variables.customerEmail,
-              contact: variables.customerPhone,
-            },
-            theme: {
-              color: '#D2691E',
-            },
+        await new Promise<void>((resolve, reject) => {
+          script.onload = () => resolve();
+          script.onerror = () => {
+            console.error("Failed to load Razorpay script.");
+            toast.error("Failed to load payment gateway. Please try again.");
+            reject(new Error("Failed to load Razorpay script."));
           };
+        });
+      }
 
-          const rzp = new window.Razorpay(options);
-          rzp.open();
-        } else {
-          toast.error('Razorpay script failed to load. Please try again.');
-          console.error('Razorpay script not loaded.');
-        }
+      const options = {
+        key: 'rzp_test_YOUR_KEY_ID', // Placeholder: Replace with actual Razorpay Key ID from environment variables
+        amount: data.totalAmount * 100, // Razorpay expects amount in paisa
+        name: 'Log House Restaurant',
+        order_id: data.razorpayOrderId,
+        handler: function (response: any) {
+          // Payment successful, backend webhook will handle verification
+          console.log('Razorpay payment successful:', response);
+          // No explicit frontend call needed for verification as per instruction
+        },
+        prefill: {
+          name: variables.customerName,
+          email: variables.customerEmail,
+          contact: variables.customerPhone,
+        },
+        theme: {
+          color: '#D2691E', // From design tokens
+        },
+      };
 
-        clearCart();
-        navigate(`/order-confirmation/${data.id}`);
-      },
-      onError: (error: Error) => {
-        console.error('Order creation failed:', error);
-        toast.error('Failed to place order: ' + error.message);
-      },
-    }
-  );
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+
+      // Clear cart after successful order initiation (payment modal opened)
+      clearCart();
+
+      // Navigate to order confirmation page
+      navigate(`/order-confirmation/${data.id}`);
+    },
+    onError: (error: Error) => {
+      console.error("Error creating order:", error);
+      toast.error("Failed to place order: " + error.message);
+    },
+  });
 }

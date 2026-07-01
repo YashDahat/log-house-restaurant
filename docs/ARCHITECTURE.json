@@ -1874,7 +1874,7 @@
     "file_type" : "FRONTEND",
     "layer" : "HOOK",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "A custom hook to easily access the authentication context.",
     "public_functions" : [ {
@@ -2054,7 +2054,7 @@
     "file_type" : "FRONTEND",
     "layer" : "HOOK",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "Custom hook for fetching and managing menu data state.",
     "public_functions" : [ {
@@ -2178,7 +2178,7 @@
     "file_type" : "FRONTEND",
     "layer" : "HOOK",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "Custom hook for managing reservation state.",
     "public_functions" : [ {
@@ -2323,7 +2323,7 @@
     "file_type" : "FRONTEND",
     "layer" : "HOOK",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "Custom hook for managing order state.",
     "public_functions" : [ {
@@ -2504,7 +2504,7 @@
     "file_type" : "FRONTEND",
     "layer" : "HOOK",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "Custom hook for fetching promotion data.",
     "public_functions" : [ {
