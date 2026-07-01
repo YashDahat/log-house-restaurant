@@ -1,73 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { clsx } from 'clsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import axios from 'axios';
 
-// Define interfaces based on the expected API responses and requests
+// Define types based on the instruction's implied API responses
 interface OrderItem {
-  menuItemName: string;
+  menuItemId: string;
+  name: string;
   quantity: number;
   price: number;
 }
 
+type OrderStatus = 'PENDING' | 'PREPARING' | 'READY_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED';
+
 interface OrderResponse {
-  orderId: string; // Assuming UUID as string
+  orderId: string;
   customerName: string;
   totalAmount: number;
-  status: string;
+  status: OrderStatus;
   orderItems: OrderItem[];
-  orderDate: string; // Assuming ISO string date
+  orderDate: string; // Assuming an order date field
 }
 
 interface UpdateOrderStatusRequest {
-  status: string;
+  status: OrderStatus;
 }
 
-const AdminOrdersPage: React.FC = () => {
+const AdminOrdersPage = (): JSX.Element => {
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
-  const [selectedOrder, setSelectedOrder] = useState<OrderResponse | null>(null);
-  const [newStatus, setNewStatus] = useState<string>('');
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
-
-  const orderStatuses = ['RECEIVED', 'PREPARING', 'READY_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'];
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null); // Stores orderId being updated
 
   const fetchOrders = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/v1/admin/orders');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data: OrderResponse[] = await response.json();
-      setOrders(data);
+      const response = await axios.get<OrderResponse[]>('/api/v1/admin/orders');
+      setOrders(response.data);
     } catch (err) {
       console.error('Failed to fetch orders:', err);
       setError('Failed to load orders. Please try again.');
@@ -80,121 +52,96 @@ const AdminOrdersPage: React.FC = () => {
     fetchOrders();
   }, []);
 
-  const handleUpdateStatusClick = (order: OrderResponse) => {
-    setSelectedOrder(order);
-    setNewStatus(order.status);
-    setIsUpdateModalOpen(true);
-  };
-
-  const handleStatusUpdate = async () => {
-    if (!selectedOrder || !newStatus) return;
-
-    setIsUpdating(true);
-    setError(null);
+  const handleUpdateStatus = async (orderId: string, newStatus: OrderStatus) => {
+    setIsUpdatingStatus(orderId);
     try {
-      const response = await fetch(`/api/v1/admin/orders/${selectedOrder.orderId}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus } as UpdateOrderStatusRequest),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      // Refresh orders after successful update
-      fetchOrders();
-      setIsUpdateModalOpen(false);
+      await axios.patch(`/api/v1/admin/orders/${orderId}/status`, { status: newStatus } as UpdateOrderStatusRequest);
+      // Optimistically update UI or refetch
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order.orderId === orderId ? { ...order, status: newStatus } : order
+        )
+      );
     } catch (err) {
-      console.error('Failed to update order status:', err);
-      setError('Failed to update order status. Please try again.');
+      console.error(`Failed to update status for order ${orderId}:`, err);
+      setError(`Failed to update status for order ${orderId}.`);
     } finally {
-      setIsUpdating(false);
+      setIsUpdatingStatus(null);
     }
   };
 
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case 'RECEIVED':
-        return 'bg-blue-100 text-blue-800';
-      case 'PREPARING':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'READY_FOR_DELIVERY':
-        return 'bg-green-100 text-green-800';
-      case 'DELIVERED':
-        return 'bg-purple-100 text-purple-800';
-      case 'CANCELLED':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const orderStatuses: OrderStatus[] = ['PENDING', 'PREPARING', 'READY_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'];
 
   return (
     <AdminLayout>
       <h1 className="text-3xl font-bold text-[#4A2C2A] mb-6">Order Management</h1>
 
       <section className="py-4">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-          {isLoading && (
+        <div className="max-w-7xl mx-auto">
+          {isLoading ? (
             <div className="text-center py-8">
-              <p className="text-gray-600">Loading orders...</p>
+              <p className="text-lg text-gray-700">Loading orders...</p>
             </div>
-          )}
-
-          {error && (
+          ) : error ? (
             <div className="text-center py-8 text-red-600">
-              <p>{error}</p>
+              <p className="text-lg">{error}</p>
+              <Button onClick={fetchOrders} className="mt-4 bg-[#F7C548] hover:bg-[#E0B03C] text-[#4A2C2A] font-semibold">
+                Retry
+              </Button>
             </div>
-          )}
-
-          {!isLoading && !error && orders.length === 0 && (
+          ) : orders.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-600">No orders found.</p>
+              <p className="text-lg text-gray-700">No orders found.</p>
             </div>
-          )}
-
-          {!isLoading && !error && orders.length > 0 && (
-            <div className="overflow-x-auto">
+          ) : (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-gray-100 text-gray-700 font-semibold">
-                    <TableHead className="w-[150px]">Order ID</TableHead>
-                    <TableHead>Customer Name</TableHead>
-                    <TableHead>Order Date</TableHead>
-                    <TableHead>Total Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Order Items</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-gray-100">
+                    <TableHead className="text-gray-700 font-semibold">Order ID</TableHead>
+                    <TableHead className="text-gray-700 font-semibold">Customer Name</TableHead>
+                    <TableHead className="text-gray-700 font-semibold">Total Amount</TableHead>
+                    <TableHead className="text-gray-700 font-semibold">Items</TableHead>
+                    <TableHead className="text-gray-700 font-semibold">Status</TableHead>
+                    <TableHead className="text-gray-700 font-semibold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {orders.map((order) => (
-                    <TableRow key={order.orderId}>
+                    <TableRow key={order.orderId} className="hover:bg-gray-50 transition-all duration-200">
                       <TableCell className="font-medium">{order.orderId.substring(0, 8)}...</TableCell>
                       <TableCell>{order.customerName}</TableCell>
-                      <TableCell>{new Date(order.orderDate).toLocaleString()}</TableCell>
                       <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
                       <TableCell>
-                        <span className={clsx("px-2 py-1 rounded-full text-xs font-medium", getStatusClass(order.status))}>
-                          {order.status}
-                        </span>
+                        {order.orderItems.length} item(s)
+                        {/* Could add a popover/dialog here for details if needed */}
                       </TableCell>
                       <TableCell>
-                        <ul className="list-disc list-inside text-sm">
-                          {order.orderItems.map((item, index) => (
-                            <li key={index}>{item.menuItemName} (x{item.quantity})</li>
-                          ))}
-                        </ul>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          onClick={() => handleUpdateStatusClick(order)}
-                          className="bg-[#F7C548] hover:bg-[#E0B03C] text-[#4A2C2A] font-semibold rounded-md px-3 py-1 text-sm transition-all duration-200"
+                        <Select
+                          value={order.status}
+                          onValueChange={(newStatus: OrderStatus) => handleUpdateStatus(order.orderId, newStatus)}
+                          disabled={isUpdatingStatus === order.orderId}
                         >
-                          Update Status
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {orderStatuses.map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {status.replace(/_/g, ' ')}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium transition-all duration-200"
+                          disabled={isUpdatingStatus === order.orderId}
+                        >
+                          View Details
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -205,53 +152,6 @@ const AdminOrdersPage: React.FC = () => {
           )}
         </div>
       </section>
-
-      <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
-        <DialogContent className="sm:max-w-[425px] bg-white">
-          <DialogHeader>
-            <DialogTitle>Update Order Status</DialogTitle>
-            <DialogDescription>
-              Change the status for order {selectedOrder?.orderId.substring(0, 8)}...
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="status" className="text-right">
-                Status
-              </Label>
-              <Select onValueChange={setNewStatus} value={newStatus}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {orderStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              onClick={() => setIsUpdateModalOpen(false)}
-              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-md px-4 py-2 transition-all duration-200"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              onClick={handleStatusUpdate}
-              disabled={isUpdating}
-              className="bg-[#F7C548] hover:bg-[#E0B03C] text-[#4A2C2A] font-semibold rounded-md px-4 py-2 transition-all duration-200"
-            >
-              {isUpdating ? 'Updating...' : 'Save Changes'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </AdminLayout>
   );
 };
