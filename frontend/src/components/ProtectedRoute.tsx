@@ -6,22 +6,25 @@ interface ProtectedRouteProps {
   children: JSX.Element;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const ProtectedRoute = ({ children }: ProtectedRouteProps): JSX.Element | null => {
   const { token, isLoading } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && !token) {
+      navigate('/login', { replace: true });
+    }
+  }, [isLoading, token, navigate]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!token) {
-    useEffect(() => {
-      navigate('/login', { replace: true });
-    }, [navigate]);
-    return null;
+  if (token) {
+    return children;
   }
 
-  return children;
+  return null;
 };
 
 export default ProtectedRoute;

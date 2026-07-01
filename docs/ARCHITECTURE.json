@@ -1760,7 +1760,7 @@
     "file_type" : "FRONTEND",
     "layer" : "COMPONENT",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "A shared layout component for all public-facing pages.",
     "public_functions" : [ {
@@ -1782,7 +1782,7 @@
     "file_type" : "FRONTEND",
     "layer" : "COMPONENT",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "The main navigation header for the website.",
     "public_functions" : [ {
@@ -1804,7 +1804,7 @@
     "file_type" : "FRONTEND",
     "layer" : "COMPONENT",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "The main footer for the website, containing contact information and a map.",
     "public_functions" : [ {
@@ -1826,7 +1826,7 @@
     "file_type" : "FRONTEND",
     "layer" : "COMPONENT",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "A shared layout for all admin pages, featuring a sidebar navigation.",
     "public_functions" : [ {
@@ -1924,7 +1924,7 @@
     "file_type" : "FRONTEND",
     "layer" : "COMPONENT",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "A component that renders its children only if the user is authenticated, otherwise redirects to the login page.",
     "public_functions" : [ {
@@ -2526,7 +2526,7 @@
     "file_type" : "FRONTEND",
     "layer" : "COMPONENT",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "A component to display the currently active promotion on the homepage.",
     "public_functions" : [ {
