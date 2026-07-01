@@ -3,9 +3,8 @@ import { MenuItem, MenuItemCategory } from '../types/menu';
 
 export const getMenuItems = async (category?: string): Promise<MenuItem[]> => {
   try {
-    const response = await apiClient.get<MenuItem[]>('/menu', {
-      params: category ? { category } : {},
-    });
+    const url = category ? `/menu?category=${category}` : '/menu';
+    const response = await apiClient.get<MenuItem[]>(url);
     return response.data;
   } catch (error) {
     console.error('Error fetching menu items:', error);
