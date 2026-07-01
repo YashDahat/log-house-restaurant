@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
-import { MenuItem, MenuItemCategory } from '../types/menu';
 import { getMenuItems, getMenuCategories } from '../services/menuService';
+import { MenuItem, MenuItemCategory } from '../types/menu';
 
 export const useMenu = (category?: string) => {
   const { data, isLoading, error } = useQuery<MenuItem[], Error>(
@@ -8,11 +8,7 @@ export const useMenu = (category?: string) => {
     () => getMenuItems(category)
   );
 
-  return {
-    data: data || [],
-    isLoading,
-    error,
-  };
+  return { data: data || [], isLoading, error };
 };
 
 export const useMenuCategories = () => {
@@ -21,9 +17,5 @@ export const useMenuCategories = () => {
     getMenuCategories
   );
 
-  return {
-    data: data || [],
-    isLoading,
-    error,
-  };
+  return { data: data || [], isLoading, error };
 };
