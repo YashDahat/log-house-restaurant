@@ -11,7 +11,7 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table';
-import { clsx } from 'clsx'; // For className merging
+import { clsx } from 'clsx';
 
 // Radix UI components as per Rule 8a
 import { Root as Dialog, Trigger as DialogTrigger, Content as DialogContent, Title as DialogTitle, Close as DialogClose } from '@radix-ui/react-dialog';
@@ -215,7 +215,7 @@ const AdminMenuPage: React.FC = () => {
                           Edit
                         </Button>
                         <Button
-                          onClick={() => handleDeleteClick(item.id!)} // id is guaranteed for existing items
+                          onClick={() => handleDeleteClick(item.id!)}
                           className="bg-red-500 hover:bg-red-600 text-white font-medium rounded-md px-3 py-1 text-sm transition-all duration-200"
                         >
                           Delete
@@ -282,7 +282,7 @@ const AdminMenuPage: React.FC = () => {
                   <Label htmlFor="category" className="text-right text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     Category
                   </Label>
-                  <Select onValueChange={handleCategoryChange} value={formData.category} required>
+                  <Select onValueChange={handleCategoryChange} value={formData.category}>
                     <SelectTrigger className="col-span-3 flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
@@ -331,3 +331,18 @@ const AdminMenuPage: React.FC = () => {
                   </DialogClose>
                   <Button
                     type="submit"
+                    className="bg-[#F7C548] hover:bg-[#E0B03C] text-[#4A2C2A] font-semibold rounded-md px-4 py-2 transition-all duration-200 mr-2"
+                  >
+                    {editingItem ? 'Save Changes' : 'Add Item'}
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </section>
+    </AdminLayout>
+  );
+};
+
+export default AdminMenuPage;
