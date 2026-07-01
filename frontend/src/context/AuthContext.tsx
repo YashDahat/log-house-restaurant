@@ -1,6 +1,7 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { login as authServiceLogin } from '../services/authService';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import * as authService from '../services/authService';
 
+// Type Definitions
 interface AuthContextType {
   user: { email: string; role: string } | null;
   token: string | null;
@@ -9,81 +10,84 @@ interface AuthContextType {
   isLoading: boolean;
 }
 
+// Public Variables
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to decode JWT token payload
+const decodeJwt = (token: string) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error("Failed to decode JWT token:", error);
+    return null;
+  }
+};
+
+// Public Functions
 interface AuthProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<{ email: string; role: string } | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const decodeToken = useCallback((jwtToken: string) => {
-    try {
-      const base64Url = jwtToken.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-      const payload = JSON.parse(jsonPayload);
-      return { email: payload.email, role: payload.role };
-    } catch (error) {
-      console.error("Failed to decode JWT token:", error);
-      return null;
-    }
-  }, []);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
-      setToken(storedToken);
-      const decodedUser = decodeToken(storedToken);
-      if (decodedUser) {
-        setUser(decodedUser);
+      const decoded = decodeJwt(storedToken);
+      if (decoded && decoded.email && decoded.role) {
+        setToken(storedToken);
+        setUser({ email: decoded.email, role: decoded.role });
       } else {
-        // If token is invalid, clear it
+        // Token found but invalid, clear it
         localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
       }
     }
-  }, [decodeToken]);
+    setIsLoading(false);
+  }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
-      const response = await authServiceLogin({ email, password });
+      const response = await authService.login({ email, password });
       localStorage.setItem('token', response.token);
       setToken(response.token);
-      const decodedUser = decodeToken(response.token);
-      if (decodedUser) {
-        setUser(decodedUser);
+
+      const decoded = decodeJwt(response.token);
+      if (decoded && decoded.email && decoded.role) {
+        setUser({ email: decoded.email, role: decoded.role });
       } else {
-        // This case should ideally not happen if the backend sends a valid token
+        console.error("Login successful but token payload is invalid or missing required fields.");
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
-        throw new Error("Failed to decode token received from server.");
+        throw new Error("Invalid token received from server.");
       }
     } catch (error) {
+      console.error("Login failed:", error);
       localStorage.removeItem('token');
       setToken(null);
       setUser(null);
-      throw error; // Re-throw the error for the component to handle
+      throw error;
     } finally {
       setIsLoading(false);
     }
-  }, [decodeToken]);
+  };
 
-  const logout = useCallback(() => {
+  const logout = (): void => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-  }, []);
+  };
 
-  const contextValue = {
+  const contextValue: AuthContextType = {
     user,
     token,
     login,

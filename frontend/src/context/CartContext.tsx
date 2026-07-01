@@ -12,16 +12,11 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const CartProvider = ({ children }: { children: ReactNode }): JSX.Element => {
+export function CartProvider({ children }: { children: ReactNode }): JSX.Element {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     if (typeof window !== 'undefined') {
       const storedCartItems = localStorage.getItem('cartItems');
-      try {
-        return storedCartItems ? JSON.parse(storedCartItems) : [];
-      } catch (e) {
-        console.error("Failed to parse cart items from localStorage", e);
-        return [];
-      }
+      return storedCartItems ? JSON.parse(storedCartItems) : [];
     }
     return [];
   });
@@ -79,17 +74,13 @@ export const CartProvider = ({ children }: { children: ReactNode }): JSX.Element
     clearCart,
   };
 
-  return (
-    <CartContext.Provider value={contextValue}>
-      {children}
-    </CartContext.Provider>
-  );
-};
+  return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;
+}
 
-export const useCart = () => {
+export function useCart() {
   const context = useContext(CartContext);
   if (context === undefined) {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;
-};
+}
