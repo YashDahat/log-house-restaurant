@@ -8,5 +8,5 @@ export function useActivePromotion(): { data: Promotion | null, isLoading: boole
     queryFn: getActivePromotion,
   });
 
-  return { data, isLoading };
+  return { data: data ?? null, isLoading };
 }

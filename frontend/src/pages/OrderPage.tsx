@@ -13,7 +13,7 @@ import clsx from 'clsx';
 
 const OrderPage: React.FC = () => {
   const { cartItems, totalAmount, removeItem, updateItemQuantity } = useCart();
-  const { mutate, isLoading, isError, error } = useCreateOrder();
+  const { mutate, isPending: isLoading, isError, error } = useCreateOrder();
 
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');

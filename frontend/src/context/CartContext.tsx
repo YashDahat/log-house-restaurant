@@ -12,7 +12,7 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export function CartProvider({ children }: { children: ReactNode }): JSX.Element {
+export function CartProvider({ children }: { children: ReactNode }): React.ReactElement {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     if (typeof window !== 'undefined') {
       const storedCartItems = localStorage.getItem('cartItems');

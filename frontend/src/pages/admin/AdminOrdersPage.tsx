@@ -28,7 +28,7 @@ interface UpdateOrderStatusRequest {
   status: OrderStatus;
 }
 
-const AdminOrdersPage = (): JSX.Element => {
+const AdminOrdersPage = (): React.ReactElement => {
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

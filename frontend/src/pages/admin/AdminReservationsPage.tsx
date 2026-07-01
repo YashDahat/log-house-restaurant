@@ -32,7 +32,7 @@ interface UpdateReservationStatusRequest {
   status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 }
 
-const AdminReservationsPage = (): JSX.Element => {
+const AdminReservationsPage = (): React.ReactElement => {
   const [reservations, setReservations] = useState<ReservationResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

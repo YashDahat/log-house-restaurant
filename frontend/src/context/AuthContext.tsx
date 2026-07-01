@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import * as authService from '../services/authService';
 
 // Type Definitions
-interface AuthContextType {
+export interface AuthContextType {
   user: { email: string; role: string } | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
@@ -33,7 +33,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
+export const AuthProvider = ({ children }: AuthProviderProps): React.ReactElement => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<{ email: string; role: string } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);

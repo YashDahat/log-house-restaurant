@@ -7,7 +7,8 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps): React.JSX.Element => {
-  const { isAuthenticated, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const isAuthenticated = !!user;
   const navigate = useNavigate();
 
   useEffect(() => {

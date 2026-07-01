@@ -33,7 +33,7 @@ interface PromotionDto {
   imageUrl: string;
 }
 
-const AdminPromotionsPage = (): JSX.Element => {
+const AdminPromotionsPage = (): React.ReactElement => {
   const [promotions, setPromotions] = useState<PromotionDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

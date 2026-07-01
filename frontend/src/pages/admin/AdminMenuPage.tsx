@@ -50,7 +50,7 @@ interface MenuItem {
   imageUrl: string;
 }
 
-const AdminMenuPage = (): JSX.Element => {
+const AdminMenuPage = (): React.ReactElement => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

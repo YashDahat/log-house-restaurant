@@ -3,7 +3,7 @@ import Layout from '@/components/Layout';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useCreateReservation } from '../hooks/useReservations';
 import { CreateReservationPayload } from '../types/reservation';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import clsx from 'clsx';
 
 const ReservationPage: React.FC = () => {
@@ -14,7 +14,7 @@ const ReservationPage: React.FC = () => {
     formState: { errors },
   } = useForm<CreateReservationPayload>();
 
-  const { mutate, isLoading, isSuccess, isError, error } = useCreateReservation();
+  const { mutate, isPending: isLoading, isSuccess, isError, error } = useCreateReservation();
 
   useEffect(() => {
     if (isSuccess) {
