@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 
@@ -6,25 +6,20 @@ interface ProtectedRouteProps {
   children: JSX.Element;
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps): JSX.Element | null => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { token, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!isLoading && !token) {
-      navigate('/login', { replace: true });
-    }
-  }, [isLoading, token, navigate]);
-
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // Or a more sophisticated spinner/skeleton
   }
 
-  if (token) {
-    return children;
+  if (!token) {
+    navigate('/login', { replace: true });
+    return null;
   }
 
-  return null;
+  return children;
 };
 
 export default ProtectedRoute;

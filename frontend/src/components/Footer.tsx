@@ -3,7 +3,7 @@
     {/* Column 1: Contact Information */}
     <div>
       <h3 className="text-xl font-semibold mb-4">Log House Restaurant</h3>
-      <p className="text-gray-300">Baner Rd, Baner, Pune, Maharashtra 411069</p>
+      <p className="text-gray-300 mb-2">Baner Rd, Baner, Pune, Maharashtra 411069</p>
       <p className="text-gray-300">Phone: 093075 24224</p>
     </div>
 
@@ -22,7 +22,7 @@
         width="100%"
         height="200"
         style={{ border: 0 }}
-        allowFullScreen={true}
+        allowFullScreen=""
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
         title="Log House Restaurant Location"
@@ -32,6 +32,6 @@
 
   {/* Copyright Notice */}
   <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
-    © 2024 Log House Restaurant. All rights reserved.
+    <p>© 2024 Log House Restaurant. All rights reserved.</p>
   </div>
 </footer>

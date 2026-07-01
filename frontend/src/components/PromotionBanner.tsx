@@ -8,7 +8,7 @@ export default function PromotionBanner(): JSX.Element | null {
   }
 
   if (!promotion) {
-    return null; // Render nothing if no active promotion
+    return null; // Render nothing if no active promotion is found
   }
 
   return (
