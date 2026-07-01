@@ -6,7 +6,7 @@ interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
+const AdminLayout = ({ children }: AdminLayoutProps): React.JSX.Element => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
   }, [isAuthenticated, navigate]);
 
   if (!isAuthenticated) {
-    return null; // Render nothing or a loading spinner while redirecting
+    return <></>;
   }
 
   const handleLogout = () => {

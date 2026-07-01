@@ -1,6 +1,7 @@
+import React from 'react';
 import { useActivePromotion } from '../hooks/usePromotions';
 
-export default function PromotionBanner(): JSX.Element | null {
+export default function PromotionBanner(): React.JSX.Element | null {
   const { data: promotion, isLoading } = useActivePromotion();
 
   if (isLoading) {

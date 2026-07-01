@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getMenuItems, getMenuCategories } from '../services/menuService';
 import { MenuItem, MenuItemCategory } from '../types/menu';
 

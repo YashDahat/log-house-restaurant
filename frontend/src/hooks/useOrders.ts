@@ -1,4 +1,4 @@
-import { useMutation, UseMutationResult } from 'react-query';
+import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { createOrder } from '../services/orderService';
 import { Order, CreateOrderPayload } from '../types/order';
 import { useCart } from '../context/CartContext';
