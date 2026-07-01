@@ -11,8 +11,8 @@ COPY backend/ .
 COPY --from=frontend-build /app/frontend/dist ./src/main/resources/static
 RUN mvn package -q -DskipTests
 
-FROM eclipse-temurin:17-jre-alpine
-RUN addgroup -S app && adduser -S app -G app
+FROM eclipse-temurin:17-jre-jammy
+RUN groupadd -r app && useradd -r -g app app
 WORKDIR /app
 COPY --from=backend-build /app/target/*.jar app.jar
 USER app
