@@ -634,3 +634,100 @@ This file tracks each generation attempt.
 - Embedded Google Map
 
 ---
+
+## Attempt 1 — 2026-07-01 [IN PROGRESS]
+
+**Business:** Log House Restaurant
+**Planned Files (90):**
+- backend/src/main/java/com/loghouserestaurant/model/User.java
+- backend/src/main/java/com/loghouserestaurant/model/Role.java
+- backend/src/main/java/com/loghouserestaurant/repository/UserRepository.java
+- backend/src/main/java/com/loghouserestaurant/service/UserService.java
+- backend/src/main/java/com/loghouserestaurant/util/JwtUtil.java
+- backend/src/main/java/com/loghouserestaurant/security/JwtAuthFilter.java
+- backend/src/main/java/com/loghouserestaurant/config/SecurityConfig.java
+- backend/src/main/java/com/loghouserestaurant/config/AdminInitializer.java
+- backend/src/main/java/com/loghouserestaurant/controller/AuthController.java
+- backend/src/main/java/com/loghouserestaurant/dto/AuthRequest.java
+- backend/src/main/java/com/loghouserestaurant/dto/AuthResponse.java
+- backend/src/main/java/com/loghouserestaurant/controller/SpaController.java
+- backend/src/main/java/com/loghouserestaurant/exception/GlobalExceptionHandler.java
+- backend/src/main/java/com/loghouserestaurant/dto/ErrorResponse.java
+- backend/src/main/java/com/loghouserestaurant/config/DataSeeder.java
+- backend/src/main/java/com/loghouserestaurant/model/MenuItem.java
+- backend/src/main/java/com/loghouserestaurant/model/MenuItemCategory.java
+- backend/src/main/java/com/loghouserestaurant/repository/MenuItemRepository.java
+- backend/src/main/java/com/loghouserestaurant/repository/MenuItemCategoryRepository.java
+- backend/src/main/java/com/loghouserestaurant/service/MenuService.java
+- backend/src/main/java/com/loghouserestaurant/dto/MenuItemDto.java
+- backend/src/main/java/com/loghouserestaurant/dto/MenuItemCategoryDto.java
+- backend/src/main/java/com/loghouserestaurant/controller/MenuController.java
+- backend/src/main/java/com/loghouserestaurant/controller/AdminMenuController.java
+- backend/src/main/java/com/loghouserestaurant/model/Reservation.java
+- backend/src/main/java/com/loghouserestaurant/model/ReservationStatus.java
+- backend/src/main/java/com/loghouserestaurant/repository/ReservationRepository.java
+- backend/src/main/java/com/loghouserestaurant/service/ReservationService.java
+- backend/src/main/java/com/loghouserestaurant/dto/CreateReservationRequest.java
+- backend/src/main/java/com/loghouserestaurant/dto/ReservationResponse.java
+- backend/src/main/java/com/loghouserestaurant/dto/UpdateReservationStatusRequest.java
+- backend/src/main/java/com/loghouserestaurant/controller/ReservationController.java
+- backend/src/main/java/com/loghouserestaurant/controller/AdminReservationController.java
+- backend/src/main/java/com/loghouserestaurant/model/Order.java
+- backend/src/main/java/com/loghouserestaurant/model/OrderItem.java
+- backend/src/main/java/com/loghouserestaurant/model/OrderStatus.java
+- backend/src/main/java/com/loghouserestaurant/repository/OrderRepository.java
+- backend/src/main/java/com/loghouserestaurant/repository/OrderItemRepository.java
+- backend/src/main/java/com/loghouserestaurant/service/OrderService.java
+- backend/src/main/java/com/loghouserestaurant/dto/CreateOrderRequest.java
+- backend/src/main/java/com/loghouserestaurant/dto/OrderItemRequest.java
+- backend/src/main/java/com/loghouserestaurant/dto/OrderResponse.java
+- backend/src/main/java/com/loghouserestaurant/dto/OrderItemResponse.java
+- backend/src/main/java/com/loghouserestaurant/dto/UpdateOrderStatusRequest.java
+- backend/src/main/java/com/loghouserestaurant/controller/OrderController.java
+- backend/src/main/java/com/loghouserestaurant/controller/AdminOrderController.java
+- backend/src/main/java/com/loghouserestaurant/service/PaymentService.java
+- backend/src/main/java/com/loghouserestaurant/controller/PaymentController.java
+- backend/src/main/java/com/loghouserestaurant/model/Promotion.java
+- backend/src/main/java/com/loghouserestaurant/repository/PromotionRepository.java
+- backend/src/main/java/com/loghouserestaurant/service/PromotionService.java
+- backend/src/main/java/com/loghouserestaurant/dto/PromotionDto.java
+- backend/src/main/java/com/loghouserestaurant/controller/PromotionController.java
+- backend/src/main/java/com/loghouserestaurant/controller/AdminPromotionController.java
+- frontend/src/api/client.ts
+- frontend/src/App.tsx
+- frontend/src/components/Layout.tsx
+- frontend/src/components/Header.tsx
+- frontend/src/components/Footer.tsx
+- frontend/src/components/admin/AdminLayout.tsx
+- frontend/src/context/AuthContext.tsx
+- frontend/src/hooks/useAuth.ts
+- frontend/src/services/authService.ts
+- frontend/src/components/ProtectedRoute.tsx
+- frontend/src/pages/LoginPage.tsx
+- frontend/src/pages/admin/AdminDashboardPage.tsx
+- frontend/src/types/menu.ts
+- frontend/src/services/menuService.ts
+- frontend/src/hooks/useMenu.ts
+- frontend/src/pages/MenuPage.tsx
+- frontend/src/pages/admin/AdminMenuPage.tsx
+- frontend/src/types/reservation.ts
+- frontend/src/services/reservationService.ts
+- frontend/src/hooks/useReservations.ts
+- frontend/src/pages/ReservationPage.tsx
+- frontend/src/pages/admin/AdminReservationsPage.tsx
+- frontend/src/types/order.ts
+- frontend/src/context/CartContext.tsx
+- frontend/src/services/orderService.ts
+- frontend/src/hooks/useOrders.ts
+- frontend/src/pages/OrderPage.tsx
+- frontend/src/pages/admin/AdminOrdersPage.tsx
+- frontend/src/pages/HomePage.tsx
+- frontend/src/pages/AboutPage.tsx
+- frontend/src/pages/ContactPage.tsx
+- frontend/src/types/promotion.ts
+- frontend/src/services/promotionService.ts
+- frontend/src/hooks/usePromotions.ts
+- frontend/src/components/PromotionBanner.tsx
+- frontend/src/pages/admin/AdminPromotionsPage.tsx
+
+---

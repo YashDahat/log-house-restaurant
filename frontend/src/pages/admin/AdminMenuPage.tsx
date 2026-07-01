@@ -11,10 +11,9 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table';
-import { clsx } from 'clsx';
 
 // Radix UI components as per Rule 8a
-import { Root as Dialog, Trigger as DialogTrigger, Content as DialogContent, Title as DialogTitle, Close as DialogClose } from '@radix-ui/react-dialog';
+import { Root as Dialog, Content as DialogContent, Title as DialogTitle, Close as DialogClose } from '@radix-ui/react-dialog';
 import { Root as Select, Trigger as SelectTrigger, Value as SelectValue, Content as SelectContent, Item as SelectItem } from '@radix-ui/react-select';
 import { Root as Checkbox } from '@radix-ui/react-checkbox';
 import { Root as Label } from '@radix-ui/react-label';
