@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import axios from 'axios';
 import {
   Table,
   TableBody,
@@ -16,13 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import axios from 'axios';
+import { format } from 'date-fns';
 
 interface ReservationResponse {
   id: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
-  reservationTime: string; // Assuming ISO string
+  reservationTime: string; // ISO string
   numberOfGuests: number;
   status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 }
@@ -33,7 +34,7 @@ interface UpdateReservationStatusRequest {
 
 const AdminReservationsPage: React.FC = () => {
   const [reservations, setReservations] = useState<ReservationResponse[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchReservations = async () => {
@@ -54,12 +55,12 @@ const AdminReservationsPage: React.FC = () => {
     fetchReservations();
   }, []);
 
-  const handleStatusChange = async (reservationId: string, newStatus: ReservationResponse['status']) => {
+  const handleStatusChange = async (id: string, newStatus: ReservationResponse['status']) => {
     try {
-      await axios.patch<void>(`/api/v1/admin/reservations/${reservationId}/status`, { status: newStatus } as UpdateReservationStatusRequest);
-      fetchReservations(); // Refresh the list
+      await axios.patch<void>(`/api/v1/admin/reservations/${id}/status`, { status: newStatus } as UpdateReservationStatusRequest);
+      fetchReservations(); // Refresh the list after update
     } catch (err) {
-      console.error(`Failed to update status for reservation ${reservationId}:`, err);
+      console.error(`Failed to update reservation ${id} status to ${newStatus}:`, err);
       setError('Failed to update reservation status. Please try again.');
     }
   };
@@ -72,7 +73,7 @@ const AdminReservationsPage: React.FC = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       {!isLoading && !error && reservations.length === 0 && (
-        <div className="text-center py-8">
+        <div className="text-center py-10">
           <p className="text-lg text-gray-600">No reservations found.</p>
         </div>
       )}
@@ -80,8 +81,8 @@ const AdminReservationsPage: React.FC = () => {
       {!isLoading && !error && reservations.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
           <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-100">
+            <TableHeader className="bg-gray-100">
+              <TableRow>
                 <TableHead className="text-gray-700 font-semibold">Customer Name</TableHead>
                 <TableHead className="text-gray-700 font-semibold">Email</TableHead>
                 <TableHead className="text-gray-700 font-semibold">Phone</TableHead>
@@ -97,7 +98,7 @@ const AdminReservationsPage: React.FC = () => {
                   <TableCell>{reservation.customerName}</TableCell>
                   <TableCell>{reservation.customerEmail}</TableCell>
                   <TableCell>{reservation.customerPhone}</TableCell>
-                  <TableCell>{new Date(reservation.reservationTime).toLocaleString()}</TableCell>
+                  <TableCell>{format(new Date(reservation.reservationTime), 'MMM dd, yyyy HH:mm')}</TableCell>
                   <TableCell>{reservation.numberOfGuests}</TableCell>
                   <TableCell>
                     <Select
@@ -106,21 +107,19 @@ const AdminReservationsPage: React.FC = () => {
                         handleStatusChange(reservation.id, newStatus)
                       }
                     >
-                      <SelectTrigger className="w-[160px]">
-                        <SelectValue placeholder="Update Status" />
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        {['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'].map((status) => (
-                          <SelectItem key={status} value={status}>
-                            {status}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="PENDING">Pending</SelectItem>
+                        <SelectItem value="CONFIRMED">Confirmed</SelectItem>
+                        <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                        <SelectItem value="COMPLETED">Completed</SelectItem>
                       </SelectContent>
                     </Select>
                   </TableCell>
                   <TableCell>
-                    {/* Additional actions could go here, e.g., view details */}
-                    <span className="text-gray-500">No additional actions</span>
+                    {/* No explicit actions specified beyond status update */}
                   </TableCell>
                 </TableRow>
               ))}

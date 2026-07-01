@@ -1946,7 +1946,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "The login page for administrators.",
     "public_functions" : [ {
@@ -1968,7 +1968,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "The main dashboard page for the admin area.",
     "public_functions" : [ {
@@ -2081,7 +2081,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "The page that displays the restaurant's interactive digital menu.",
     "public_functions" : [ {
@@ -2103,8 +2103,8 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
-    "status" : "GENERATED",
+    "updated_date" : "2026-07-01",
+    "status" : "GENERATION_FAILED",
     "description" : "Admin page for managing menu items.",
     "public_functions" : [ {
       "name" : "AdminMenuPage",
@@ -2200,7 +2200,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "The page for customers to book a table.",
     "public_functions" : [ {
@@ -2222,7 +2222,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "Admin page for managing reservations.",
     "public_functions" : [ {
@@ -2345,7 +2345,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "The checkout page where customers review their cart and place an order.",
     "public_functions" : [ {
@@ -2367,7 +2367,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "Admin page for managing customer orders.",
     "public_functions" : [ {
@@ -2389,7 +2389,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "The landing page for the Log House Restaurant website.",
     "public_functions" : [ {
@@ -2411,7 +2411,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "A static page describing the restaurant's story and values.",
     "public_functions" : [ {
@@ -2433,7 +2433,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "A page with contact details, a contact form, and a map.",
     "public_functions" : [ {
@@ -2548,7 +2548,7 @@
     "file_type" : "FRONTEND",
     "layer" : "PAGE",
     "created_date" : "2024-07-27",
-    "updated_date" : "2026-06-30",
+    "updated_date" : "2026-07-01",
     "status" : "GENERATED",
     "description" : "Admin page for managing promotions.",
     "public_functions" : [ {

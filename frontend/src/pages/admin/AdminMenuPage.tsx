@@ -1,44 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
+  TableBody,
   TableRow,
+  TableHead,
+  TableCell,
 } from '@/components/ui/table';
-import axios from 'axios';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useToast } from '@/components/ui/use-toast';
-import clsx from 'clsx';
+import { clsx } from 'clsx'; // For className merging
 
-// Define the MenuItemDto schema
-const menuItemSchema = z.object({
-  id: z.string().uuid().optional(), // Optional for creation
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-  price: z.number().min(0.01, 'Price must be positive'),
-  category: z.string().min(1, 'Category is required'),
-  isAvailable: z.boolean().default(true),
-  imageUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
-});
+// Radix UI components as per Rule 8a
+import { Root as Dialog, Trigger as DialogTrigger, Content as DialogContent, Title as DialogTitle, Close as DialogClose } from '@radix-ui/react-dialog';
+import { Root as Select, Trigger as SelectTrigger, Value as SelectValue, Content as SelectContent, Item as SelectItem } from '@radix-ui/react-select';
+import { Root as Checkbox } from '@radix-ui/react-checkbox';
+import { Root as Label } from '@radix-ui/react-label';
 
-type MenuItemDto = z.infer<typeof menuItemSchema>;
+
+// Inferred MenuItemDto structure based on requirements
+interface MenuItemDto {
+  id?: string; // UUID, optional for creation
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  isAvailable: boolean;
+  imageUrl: string;
+}
 
 const AdminMenuPage: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItemDto[]>([]);
@@ -46,38 +37,30 @@ const AdminMenuPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItemDto | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDeleting, setIsDeleting] = useState<string | null>(null); // Stores ID of item being deleted
-  const { toast } = useToast();
 
-  const form = useForm<MenuItemDto>({
-    resolver: zodResolver(menuItemSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      price: 0,
-      category: '',
-      isAvailable: true,
-      imageUrl: '',
-    },
+  // Form state for new/edited item
+  const [formData, setFormData] = useState<MenuItemDto>({
+    name: '',
+    description: '',
+    price: 0,
+    category: '',
+    isAvailable: true,
+    imageUrl: '',
   });
-
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = form;
 
   const fetchMenuItems = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.get<MenuItemDto[]>('/api/v1/admin/menu');
-      setMenuItems(response.data);
+      const response = await fetch('/api/v1/admin/menu');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data: MenuItemDto[] = await response.json();
+      setMenuItems(data);
     } catch (err) {
       setError('Failed to fetch menu items.');
       console.error('Error fetching menu items:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch menu items.',
-        variant: 'destructive',
-      });
     } finally {
       setIsLoading(false);
     }
@@ -87,71 +70,96 @@ const AdminMenuPage: React.FC = () => {
     fetchMenuItems();
   }, []);
 
-  const handleEdit = (item: MenuItemDto) => {
-    setEditingItem(item);
-    reset(item); // Populate form with item data
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'number' ? parseFloat(value) : value,
+    }));
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      isAvailable: checked,
+    }));
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      category: value,
+    }));
+  };
+
+  const handleAddClick = () => {
+    setEditingItem(null);
+    setFormData({
+      name: '',
+      description: '',
+      price: 0,
+      category: '',
+      isAvailable: true,
+      imageUrl: '',
+    });
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleEditClick = (item: MenuItemDto) => {
+    setEditingItem(item);
+    setFormData(item);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteClick = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this menu item?')) {
       return;
     }
 
-    setIsDeleting(id);
     try {
-      await axios.delete(`/api/v1/admin/menu/${id}`);
-      toast({
-        title: 'Success',
-        description: 'Menu item deleted successfully.',
+      const response = await fetch(`/api/v1/admin/menu/${id}`, {
+        method: 'DELETE',
       });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       fetchMenuItems(); // Refresh the list
     } catch (err) {
       setError('Failed to delete menu item.');
       console.error('Error deleting menu item:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to delete menu item.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsDeleting(null);
     }
   };
 
-  const onSubmit = async (data: MenuItemDto) => {
-    setIsSubmitting(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError(null);
+
+    const method = editingItem ? 'PUT' : 'POST';
+    const url = editingItem ? `/api/v1/admin/menu/${editingItem.id}` : '/api/v1/admin/menu';
+
     try {
-      if (editingItem) {
-        // Update existing item
-        await axios.put(`/api/v1/admin/menu/${editingItem.id}`, data);
-        toast({
-          title: 'Success',
-          description: 'Menu item updated successfully.',
-        });
-      } else {
-        // Create new item
-        await axios.post('/api/v1/admin/menu', data);
-        toast({
-          title: 'Success',
-          description: 'Menu item created successfully.',
-        });
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       setIsModalOpen(false);
       fetchMenuItems(); // Refresh the list
     } catch (err) {
-      setError('Failed to save menu item.');
-      console.error('Error saving menu item:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to save menu item.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
+      setError(`Failed to ${editingItem ? 'update' : 'create'} menu item.`);
+      console.error(`Error ${editingItem ? 'updating' : 'creating'} menu item:`, err);
     }
   };
+
+  // Placeholder categories for the select dropdown
+  const categories = ['Appetizer', 'Main Course', 'Dessert', 'Beverage'];
 
   return (
     <AdminLayout>
@@ -160,108 +168,25 @@ const AdminMenuPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-[#4A2C2A] mb-6">Menu Management</h1>
 
           <div className="flex justify-end mb-4">
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  className="bg-[#F7C548] hover:bg-[#E0B03C] text-[#4A2C2A] font-semibold rounded-md px-4 py-2 transition-all duration-200"
-                  onClick={() => {
-                    setEditingItem(null);
-                    reset({
-                      name: '',
-                      description: '',
-                      price: 0,
-                      category: '',
-                      isAvailable: true,
-                      imageUrl: '',
-                    });
-                  }}
-                >
-                  Add New Menu Item
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>{editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name
-                    </Label>
-                    <Input id="name" {...register('name')} className="col-span-3" />
-                    {errors.name && <p className="col-span-4 text-red-500 text-sm text-right">{errors.name.message}</p>}
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="description" className="text-right">
-                      Description
-                    </Label>
-                    <Textarea id="description" {...register('description')} className="col-span-3" />
-                    {errors.description && <p className="col-span-4 text-red-500 text-sm text-right">{errors.description.message}</p>}
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="price" className="text-right">
-                      Price
-                    </Label>
-                    <Input id="price" type="number" step="0.01" {...register('price', { valueAsNumber: true })} className="col-span-3" />
-                    {errors.price && <p className="col-span-4 text-red-500 text-sm text-right">{errors.price.message}</p>}
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="category" className="text-right">
-                      Category
-                    </Label>
-                    <Input id="category" {...register('category')} className="col-span-3" />
-                    {errors.category && <p className="col-span-4 text-red-500 text-sm text-right">{errors.category.message}</p>}
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="imageUrl" className="text-right">
-                      Image URL
-                    </Label>
-                    <Input id="imageUrl" {...register('imageUrl')} className="col-span-3" />
-                    {errors.imageUrl && <p className="col-span-4 text-red-500 text-sm text-right">{errors.imageUrl.message}</p>}
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="isAvailable" className="text-right">
-                      Available
-                    </Label>
-                    <Checkbox
-                      id="isAvailable"
-                      checked={form.watch('isAvailable')}
-                      onCheckedChange={(checked) => setValue('isAvailable', checked as boolean)}
-                      className="col-span-3"
-                    />
-                    {errors.isAvailable && <p className="col-span-4 text-red-500 text-sm text-right">{errors.isAvailable.message}</p>}
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-[#F7C548] hover:bg-[#E0B03C] text-[#4A2C2A] font-semibold transition-all duration-200 mt-4"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'Saving...' : 'Save changes'}
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Button
+              onClick={handleAddClick}
+              className="bg-[#F7C548] hover:bg-[#E0B03C] text-[#4A2C2A] font-semibold rounded-md px-4 py-2 transition-all duration-200"
+            >
+              Add New Menu Item
+            </Button>
           </div>
 
-          {isLoading && (
-            <div className="text-center py-10">
-              <p className="text-gray-500">Loading menu items...</p>
-              {/* Could add a spinner here */}
-            </div>
-          )}
-          {error && <p className="text-red-500 text-center py-10">Error: {error}</p>}
-
-          {!isLoading && !error && menuItems.length === 0 && (
-            <div className="text-center py-10">
-              <p className="text-gray-500">No menu items found. Add a new one!</p>
-            </div>
-          )}
-
-          {!isLoading && !error && menuItems.length > 0 && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 overflow-x-auto">
+          {isLoading ? (
+            <div className="text-center py-8">Loading menu items...</div>
+          ) : error ? (
+            <div className="text-center py-8 text-red-600">{error}</div>
+          ) : menuItems.length === 0 ? (
+            <div className="text-center py-8 text-gray-600">No menu items found. Click "Add New Menu Item" to get started.</div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
               <Table>
-                <TableHeader className="bg-gray-100 text-gray-700 font-semibold">
-                  <TableRow>
+                <TableHeader>
+                  <TableRow className="bg-gray-100 text-gray-700 font-semibold">
                     <TableHead>Name</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Price</TableHead>
@@ -275,33 +200,25 @@ const AdminMenuPage: React.FC = () => {
                   {menuItems.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">{item.name}</TableCell>
-                      <TableCell className="max-w-[200px] truncate">{item.description}</TableCell>
-                      <TableCell>${item.price?.toFixed(2)}</TableCell>
+                      <TableCell className="text-sm text-gray-600 max-w-xs truncate">{item.description}</TableCell>
+                      <TableCell>${item.price.toFixed(2)}</TableCell>
                       <TableCell>{item.category}</TableCell>
                       <TableCell>{item.isAvailable ? 'Yes' : 'No'}</TableCell>
-                      <TableCell className="truncate max-w-[150px]">
-                        {item.imageUrl || 'N/A'}
+                      <TableCell className="text-sm text-blue-500 hover:underline max-w-[150px] truncate">
+                        <a href={item.imageUrl} target="_blank" rel="noopener noreferrer">{item.imageUrl}</a>
                       </TableCell>
-                      <TableCell className="text-right min-w-[150px]">
+                      <TableCell className="text-right space-x-2">
                         <Button
-                          variant="outline"
-                          size="sm"
-                          className="mr-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium transition-all duration-200"
-                          onClick={() => handleEdit(item)}
+                          onClick={() => handleEditClick(item)}
+                          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-md px-3 py-1 text-sm transition-all duration-200"
                         >
                           Edit
                         </Button>
                         <Button
-                          variant="destructive"
-                          size="sm"
-                          className={clsx(
-                            "bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-200",
-                            isDeleting === item.id && "opacity-70 cursor-not-allowed"
-                          )}
-                          onClick={() => item.id && handleDelete(item.id)}
-                          disabled={isDeleting === item.id}
+                          onClick={() => handleDeleteClick(item.id!)} // id is guaranteed for existing items
+                          className="bg-red-500 hover:bg-red-600 text-white font-medium rounded-md px-3 py-1 text-sm transition-all duration-200"
                         >
-                          {isDeleting === item.id ? 'Deleting...' : 'Delete'}
+                          Delete
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -310,10 +227,107 @@ const AdminMenuPage: React.FC = () => {
               </Table>
             </div>
           )}
-        </div>
-      </section>
-    </AdminLayout>
-  );
-};
 
-export default AdminMenuPage;
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogContent className="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] bg-white p-6 rounded-lg shadow-lg">
+              {/* Mimics DialogHeader */}
+              <div className="flex flex-col space-y-1.5 text-center sm:text-left">
+                <DialogTitle className="text-2xl font-bold text-[#4A2C2A]">
+                  {editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}
+                </DialogTitle>
+              </div>
+              <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="col-span-3"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="description" className="text-right text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Description
+                  </Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    className="col-span-3"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="price" className="text-right text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Price
+                  </Label>
+                  <Input
+                    id="price"
+                    name="price"
+                    type="number"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    className="col-span-3"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="category" className="text-right text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Category
+                  </Label>
+                  <Select onValueChange={handleCategoryChange} value={formData.category} required>
+                    <SelectTrigger className="col-span-3 flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2">
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category} className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="imageUrl" className="text-right text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Image URL
+                  </Label>
+                  <Input
+                    id="imageUrl"
+                    name="imageUrl"
+                    value={formData.imageUrl}
+                    onChange={handleInputChange}
+                    className="col-span-3"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="isAvailable" className="text-right text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Available
+                  </Label>
+                  <Checkbox
+                    id="isAvailable"
+                    checked={formData.isAvailable}
+                    onCheckedChange={handleCheckboxChange}
+                    className="col-span-3 justify-self-start peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                  />
+                </div>
+                {/* Mimics DialogFooter */}
+                <div className="flex flex-row-reverse sm:justify-end sm:space-x-2">
+                  <DialogClose asChild>
+                    <Button
+                      type="button"
+                      className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-md px-4 py-2 transition-all duration-200"
+                    >
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button
+                    type="submit"

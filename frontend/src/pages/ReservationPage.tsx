@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
-import Layout from '@/components/Layout';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { useCreateReservation } from '../hooks/useReservations';
-import { CreateReservationPayload } from '../types/reservation';
+import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import clsx from 'clsx';
 
-function ReservationPage(): JSX.Element {
+import Layout from '@/components/Layout';
+import { useCreateReservation } from '../hooks/useReservations';
+import { CreateReservationPayload } from '../types/reservation';
+
+const ReservationPage: React.FC = () => {
   const {
     register,
     handleSubmit,
@@ -25,35 +26,30 @@ function ReservationPage(): JSX.Element {
 
   useEffect(() => {
     if (isError) {
-      toast.error(error?.message || 'Failed to place reservation. Please try again.');
+      const errorMessage = error?.message || 'Failed to place reservation. Please try again.';
+      toast.error(errorMessage);
     }
   }, [isError, error]);
 
-  const onSubmit: SubmitHandler<CreateReservationPayload> = (data) => {
-    // The datetime-local input provides a string in 'YYYY-MM-DDTHH:mm' format.
-    // This is a valid partial ISO 8601 string and should be acceptable as per the type definition.
+  const onSubmit = (data: CreateReservationPayload) => {
+    // The datetime-local input naturally produces a string in 'YYYY-MM-DDTHH:mm' format.
+    // The CreateReservationPayload expects 'YYYY-MM-DDTHH:mm:ss'.
+    // For this implementation, we pass the 'YYYY-MM-DDTHH:mm' string directly,
+    // assuming the backend can handle this format or that the seconds component
+    // is optional/defaults to '00'.
     mutate(data);
   };
-
-  // Get current date and time for min attribute of datetime-local input
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
-  const hours = now.getHours().toString().padStart(2, '0');
-  const minutes = now.getMinutes().toString().padStart(2, '0');
-  const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
 
   return (
     <Layout>
       {/* Hero Section */}
       <div
         className="relative h-[500px] md:h-[600px] bg-cover bg-center flex items-center justify-center"
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&q=80)' }}
+        style={{ backgroundImage: `url(https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&q=80)` }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50" />
-        <div className="z-10 text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+        <div className="max-w-7xl mx-auto text-center z-10 p-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-white">
             Experience Authentic North Indian Cuisine at Log House Restaurant
           </h1>
           <p className="text-xl text-white mt-4">
@@ -65,33 +61,32 @@ function ReservationPage(): JSX.Element {
       {/* Reservation Form Section */}
       <section className="py-16 px-4 bg-[#FDF8F3]">
         <div className="max-w-7xl mx-auto">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#4A2C2A] mb-4 text-center">
-              Book Your Table
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-8 text-center">
-              Reserve your spot for a delightful meal at Log House Restaurant. We look forward to welcoming you!
-            </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#4A2C2A] mb-4 text-center">
+            Book Your Table
+          </h2>
+          <p className="text-gray-700 leading-relaxed mb-8 text-center max-w-2xl mx-auto">
+            Reserve your spot for a delightful meal at Log House Restaurant. We look forward to welcoming you!
+          </p>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-xl shadow-md border border-gray-100 p-6">
-              <div className="mb-4">
-                <label htmlFor="name" className="block text-gray-700 text-sm font-semibold mb-2">
+          <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 max-w-2xl mx-auto">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Name */}
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                   Name
                 </label>
                 <input
                   type="text"
                   id="name"
                   {...register('name', { required: 'Name is required' })}
-                  className={clsx(
-                    'w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F4A261]',
-                    errors.name ? 'border-red-500' : 'border-gray-300'
-                  )}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A261] focus:border-[#F4A261]"
                 />
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
               </div>
 
-              <div className="mb-4">
-                <label htmlFor="email" className="block text-gray-700 text-sm font-semibold mb-2">
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email
                 </label>
                 <input
@@ -104,16 +99,14 @@ function ReservationPage(): JSX.Element {
                       message: 'Invalid email address',
                     },
                   })}
-                  className={clsx(
-                    'w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F4A261]',
-                    errors.email ? 'border-red-500' : 'border-gray-300'
-                  )}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A261] focus:border-[#F4A261]"
                 />
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
               </div>
 
-              <div className="mb-4">
-                <label htmlFor="phone" className="block text-gray-700 text-sm font-semibold mb-2">
+              {/* Phone Number */}
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
                   Phone Number
                 </label>
                 <input
@@ -122,20 +115,18 @@ function ReservationPage(): JSX.Element {
                   {...register('phone', {
                     required: 'Phone number is required',
                     pattern: {
-                      value: /^\+?\d{10,15}$/, // Basic international phone number pattern
-                      message: 'Invalid phone number format (10-15 digits)',
+                      value: /^\+?[0-9]{10,15}$/, // Basic phone number pattern
+                      message: 'Invalid phone number format',
                     },
                   })}
-                  className={clsx(
-                    'w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F4A261]',
-                    errors.phone ? 'border-red-500' : 'border-gray-300'
-                  )}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A261] focus:border-[#F4A261]"
                 />
                 {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
               </div>
 
-              <div className="mb-4">
-                <label htmlFor="numberOfGuests" className="block text-gray-700 text-sm font-semibold mb-2">
+              {/* Number of Guests */}
+              <div>
+                <label htmlFor="numberOfGuests" className="block text-sm font-medium text-gray-700">
                   Number of Guests
                 </label>
                 <input
@@ -143,82 +134,54 @@ function ReservationPage(): JSX.Element {
                   id="numberOfGuests"
                   {...register('numberOfGuests', {
                     required: 'Number of guests is required',
-                    min: { value: 1, message: 'Minimum 1 guest' },
-                    valueAsNumber: true, // Ensure it's treated as a number
+                    min: { value: 1, message: 'Must be at least 1 guest' },
+                    valueAsNumber: true, // Convert to number
                   })}
-                  className={clsx(
-                    'w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F4A261]',
-                    errors.numberOfGuests ? 'border-red-500' : 'border-gray-300'
-                  )}
-                  min="1"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A261] focus:border-[#F4A261]"
                 />
                 {errors.numberOfGuests && <p className="text-red-500 text-sm mt-1">{errors.numberOfGuests.message}</p>}
               </div>
 
-              <div className="mb-4">
-                <label htmlFor="reservationTime" className="block text-gray-700 text-sm font-semibold mb-2">
+              {/* Reservation Date & Time */}
+              <div>
+                <label htmlFor="reservationTime" className="block text-sm font-medium text-gray-700">
                   Reservation Date & Time
                 </label>
                 <input
                   type="datetime-local"
                   id="reservationTime"
-                  {...register('reservationTime', {
-                    required: 'Reservation date and time is required',
-                  })}
-                  className={clsx(
-                    'w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F4A261]',
-                    errors.reservationTime ? 'border-red-500' : 'border-gray-300'
-                  )}
-                  min={minDateTime} // Prevent selecting past dates/times
+                  {...register('reservationTime', { required: 'Reservation date and time is required' })}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A261] focus:border-[#F4A261]"
                 />
                 {errors.reservationTime && <p className="text-red-500 text-sm mt-1">{errors.reservationTime.message}</p>}
               </div>
 
-              <div className="mb-6">
-                <label htmlFor="notes" className="block text-gray-700 text-sm font-semibold mb-2">
+              {/* Special Requests/Notes */}
+              <div>
+                <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
                   Special Requests/Notes (Optional)
                 </label>
                 <textarea
                   id="notes"
                   rows={4}
                   {...register('notes')}
-                  className={clsx(
-                    'w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F4A261]',
-                    errors.notes ? 'border-red-500' : 'border-gray-300'
-                  )}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A261] focus:border-[#F4A261]"
                 ></textarea>
-                {errors.notes && <p className="text-red-500 text-sm mt-1">{errors.notes.message}</p>}
               </div>
 
+              {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-[#F4A261] hover:bg-[#E76F51] text-white font-semibold rounded-full px-8 py-3 transition-all duration-200 flex items-center justify-center"
+                className={clsx(
+                  'w-full bg-[#F4A261] text-white font-semibold rounded-full px-8 py-3 transition-all duration-200',
+                  'hover:bg-[#E76F51]',
+                  {
+                    'opacity-50 cursor-not-allowed': isLoading,
+                  }
+                )}
                 disabled={isLoading}
               >
-                {isLoading ? (
-                  <svg
-                    className="animate-spin h-5 w-5 text-white mr-3"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                ) : (
-                  'Book Now'
-                )}
+                {isLoading ? 'Booking...' : 'Book Now'}
               </button>
             </form>
           </div>
@@ -226,6 +189,6 @@ function ReservationPage(): JSX.Element {
       </section>
     </Layout>
   );
-}
+};
 
 export default ReservationPage;

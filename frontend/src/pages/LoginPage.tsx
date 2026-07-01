@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 import Layout from '@/components/Layout';
 
 const LoginPage: React.FC = () => {
@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
 
     try {
       await login(email, password);
-      // Redirection handled by useEffect if login is successful and token is set
+      navigate('/admin/dashboard', { replace: true });
     } catch (err) {
       setError('Invalid email or password. Please try again.');
     }
@@ -62,7 +62,9 @@ const LoginPage: React.FC = () => {
                   required
                 />
               </div>
-              {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
+              {error && (
+                <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+              )}
               <button
                 type="submit"
                 className="bg-[#F9A825] hover:bg-[#E67E22] text-white font-semibold rounded-md px-6 py-3 transition-all duration-200 w-full"

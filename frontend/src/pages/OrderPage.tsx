@@ -3,46 +3,36 @@ import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useCart } from '../context/CartContext';
 import { useCreateOrder } from '../hooks/useOrders';
-import { CartItem, CreateOrderPayload } from '../types/order';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Loader2 } from 'lucide-react';
+import { CreateOrderPayload } from '../types/order';
 import clsx from 'clsx';
 
-function OrderPage(): JSX.Element {
+const OrderPage: React.FC = () => {
   const { cartItems, totalAmount, removeItem, updateItemQuantity } = useCart();
   const { mutate, isLoading, isError, error } = useCreateOrder();
 
-  const [customerName, setCustomerName] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [customerName, setCustomerName] = useState<string>('');
+  const [customerEmail, setCustomerEmail] = useState<string>('');
+  const [customerPhone, setCustomerPhone] = useState<string>('');
+  const [deliveryAddress, setDeliveryAddress] = useState<string>('');
 
-  const isFormValid =
-    customerName.trim() !== '' &&
-    customerEmail.trim() !== '' &&
-    customerPhone.trim() !== '' &&
-    deliveryAddress.trim() !== '' &&
-    cartItems.length > 0;
+  const isFormValid = customerName && customerEmail && customerPhone && deliveryAddress;
+  const isOrderButtonDisabled = isLoading || cartItems.length === 0 || !isFormValid;
 
   const handlePlaceOrder = () => {
-    if (!isFormValid) {
+    if (cartItems.length === 0 || !isFormValid) {
       return;
     }
-
-    const orderItems = cartItems.map((item) => ({
-      menuItemId: item.id,
-      quantity: item.quantity,
-      price: item.price,
-    }));
 
     const payload: CreateOrderPayload = {
       customerName,
       customerEmail,
       customerPhone,
       deliveryAddress,
-      items: orderItems,
+      items: cartItems.map(item => ({
+        menuItemId: item.id,
+        quantity: item.quantity,
+        price: item.price,
+      })),
       totalAmount,
     };
 
@@ -51,7 +41,6 @@ function OrderPage(): JSX.Element {
 
   return (
     <Layout>
-      {/* Hero Section */}
       <section
         className="relative h-64 bg-cover bg-center flex items-center justify-center"
         style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&q=80")' }}
@@ -63,7 +52,6 @@ function OrderPage(): JSX.Element {
         </div>
       </section>
 
-      {/* Cart Summary Section */}
       <section className="py-16 px-4 bg-[#FDFBF6]">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-[#D2691E] mb-8">Your Cart</h2>
@@ -77,48 +65,48 @@ function OrderPage(): JSX.Element {
             </p>
           ) : (
             <div className="space-y-6">
-              {cartItems.map((item: CartItem) => (
-                <div key={item.id} className="flex items-center bg-white rounded-xl shadow-md border border-gray-100 p-6">
-                  <img src={item.imageUrl} alt={item.name} className="w-24 h-24 object-cover rounded-md mr-6" />
-                  <div className="flex-grow">
-                    <h3 className="text-xl font-semibold text-gray-800">{item.name}</h3>
-                    <p className="text-gray-600">Price: ₹{item.price.toFixed(2)}</p>
-                    <div className="flex items-center mt-2">
-                      <Button
+              {cartItems.map((item) => (
+                <div key={item.id} className="flex items-center justify-between bg-white rounded-xl shadow-md border border-gray-100 p-6">
+                  <div className="flex items-center space-x-4">
+                    <img src={item.imageUrl} alt={item.name} className="w-20 h-20 object-cover rounded-md" />
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-800">{item.name}</h3>
+                      <p className="text-gray-600">₹{item.price.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center border border-gray-300 rounded-md">
+                      <button
                         onClick={() => updateItemQuantity(item.id, item.quantity - 1)}
-                        className="bg-[#D2691E] hover:bg-[#B85C1A] text-white font-semibold rounded-full px-3 py-1 transition-all duration-200 text-lg"
-                        size="sm"
+                        className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition-all duration-200"
                       >
                         -
-                      </Button>
-                      <span className="mx-4 text-lg font-medium text-gray-800">{item.quantity}</span>
-                      <Button
+                      </button>
+                      <span className="px-3 py-1 text-gray-800">{item.quantity}</span>
+                      <button
                         onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
-                        className="bg-[#D2691E] hover:bg-[#B85C1A] text-white font-semibold rounded-full px-3 py-1 transition-all duration-200 text-lg"
-                        size="sm"
+                        className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition-all duration-200"
                       >
                         +
-                      </Button>
-                      <Button
-                        onClick={() => removeItem(item.id)}
-                        className="ml-auto bg-red-500 hover:bg-red-600 text-white font-semibold rounded-full px-4 py-2 transition-all duration-200"
-                        size="sm"
-                      >
-                        Remove
-                      </Button>
+                      </button>
                     </div>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      className="text-red-500 hover:text-red-700 transition-all duration-200"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               ))}
-              <div className="text-right mt-8 pt-4 border-t border-gray-200">
-                <p className="text-2xl font-bold text-gray-800">Total: ₹{totalAmount.toFixed(2)}</p>
+              <div className="text-right text-2xl font-bold text-[#D2691E] pt-4 border-t border-gray-200">
+                Total: ₹{totalAmount.toFixed(2)}
               </div>
             </div>
           )}
         </div>
       </section>
 
-      {/* Customer Details Section */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-[#D2691E] mb-8">Delivery Information</h2>
@@ -127,84 +115,84 @@ function OrderPage(): JSX.Element {
               <label htmlFor="customerName" className="block text-gray-700 text-sm font-medium mb-2">
                 Full Name
               </label>
-              <Input
-                id="customerName"
+              <input
                 type="text"
+                id="customerName"
+                className="border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#FFC107] focus:border-transparent w-full"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 required
-                className="border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#FFC107] focus:border-transparent"
               />
             </div>
             <div>
               <label htmlFor="customerEmail" className="block text-gray-700 text-sm font-medium mb-2">
                 Email Address
               </label>
-              <Input
-                id="customerEmail"
+              <input
                 type="email"
+                id="customerEmail"
+                className="border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#FFC107] focus:border-transparent w-full"
                 value={customerEmail}
                 onChange={(e) => setCustomerEmail(e.target.value)}
                 required
-                className="border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#FFC107] focus:border-transparent"
               />
             </div>
-            <div className="md:col-span-2">
+            <div>
               <label htmlFor="customerPhone" className="block text-gray-700 text-sm font-medium mb-2">
                 Phone Number
               </label>
-              <Input
-                id="customerPhone"
+              <input
                 type="tel"
+                id="customerPhone"
+                className="border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#FFC107] focus:border-transparent w-full"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 required
-                className="border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#FFC107] focus:border-transparent"
               />
             </div>
             <div className="md:col-span-2">
               <label htmlFor="deliveryAddress" className="block text-gray-700 text-sm font-medium mb-2">
                 Delivery Address
               </label>
-              <Textarea
+              <textarea
                 id="deliveryAddress"
+                rows={4}
+                className="border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#FFC107] focus:border-transparent w-full"
                 value={deliveryAddress}
                 onChange={(e) => setDeliveryAddress(e.target.value)}
-                rows={4}
                 required
-                className="border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#FFC107] focus:border-transparent"
-              />
+              ></textarea>
             </div>
           </form>
         </div>
       </section>
 
-      {/* Place Order Section */}
       <section className="py-16 px-4 bg-[#FDFBF6]">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-[#D2691E] mb-8">Confirm & Pay</h2>
-          <p className="text-3xl font-bold text-gray-800 mb-8">Final Total: ₹{totalAmount.toFixed(2)}</p>
-          <Button
+          <p className="text-gray-700 text-xl mb-6">
+            Your final total: <span className="font-bold text-[#D2691E]">₹{totalAmount.toFixed(2)}</span>
+          </p>
+          <button
             onClick={handlePlaceOrder}
-            disabled={!isFormValid || isLoading}
             className={clsx(
-              "bg-[#FFC107] hover:bg-[#E0A800] text-[#5A3A2B] font-semibold rounded-full px-8 py-3 transition-all duration-200",
-              { "opacity-50 cursor-not-allowed": !isFormValid || isLoading }
+              "bg-[#FFC107] text-[#5A3A2B] font-semibold rounded-full px-8 py-3 transition-all duration-200",
+              {
+                "hover:bg-[#E0A800]": !isOrderButtonDisabled,
+                "opacity-50 cursor-not-allowed": isOrderButtonDisabled,
+              }
             )}
+            disabled={isOrderButtonDisabled}
           >
-            {isLoading ? (
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-              'Place Order'
-            )}
-          </Button>
+            {isLoading ? 'Placing Order...' : 'Place Order'}
+          </button>
           {isError && (
-            <p className="text-red-500 mt-4 text-lg">Error: {error?.message || 'Failed to place order.'}</p>
+            <p className="mt-4 text-red-500">Error: {error?.message || 'Failed to place order.'}</p>
           )}
         </div>
       </section>
     </Layout>
   );
-}
+};
 
 export default OrderPage;
