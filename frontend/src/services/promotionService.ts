@@ -6,7 +6,7 @@ export async function getActivePromotion(): Promise<Promotion | null> {
     const response = await apiClient.get<Promotion>('/promotions/active');
     return response.data;
   } catch (error) {
-    // If the request fails (e.g., 404 Not Found if no active promotion), return null
+    // Return null if no active promotion is found or an error occurs
     return null;
   }
 }
